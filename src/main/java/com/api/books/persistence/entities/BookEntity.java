@@ -11,20 +11,31 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "books")
-public class BookEntity extends CosmicEntity {
+public class BookEntity {
 
-    private Boolean read = false;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Size(min = 3, max = 30)
+    private String name;
+
+    private Boolean isRead = false;
 
     @NotBlank
     @Size(min = 3, max = 30)
     private String author;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private UserEntity owner;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ChapterEntity> chapters;
@@ -36,7 +47,7 @@ public class BookEntity extends CosmicEntity {
         return chapterDTOs;
     }
 
-    @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CharacterEntity> characters;
 
     public List<CharacterDTO> getCharactersDTOs() {

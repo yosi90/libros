@@ -2,7 +2,7 @@ package com.api.books.services.impl;
 
 import com.api.books.persistence.entities.UserEntity;
 import com.api.books.persistence.repositories.UserRepository;
-import com.api.books.services.IUserService;
+import com.api.books.services.UserService;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ResponseDTO;
 import com.api.books.services.models.dtos.UserDTO;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 

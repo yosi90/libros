@@ -5,22 +5,31 @@ import com.api.books.services.models.dtos.UserDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class UserEntity extends CosmicEntity{
+public class UserEntity {
 
-    LocalDateTime lifeSpan =  LocalDateTime.now();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Size(min = 3, max = 30)
+    private String name;
+
+    LocalDateTime lifeSpan = LocalDateTime.now();
 
     @NotBlank
     @Pattern(regexp = "[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
@@ -41,7 +50,15 @@ public class UserEntity extends CosmicEntity{
         return bookDTOS;
     }
 
-    public UserDTO ToDTO(){
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private List<RoleEntity> roles;
+
+    public UserDTO ToDTO() {
         return new UserDTO(this);
     }
 }

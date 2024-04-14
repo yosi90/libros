@@ -1,6 +1,6 @@
 package com.api.books.security;
 
-import com.api.books.services.IJWTUtilityService;
+import com.api.books.services.JWTUtilityService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,25 +20,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private IJWTUtilityService jwtUtilityService;
+    private JWTUtilityService jwtUtilityService;
+
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(csrf -> csrf.disable())//Deshabilitamos la seguridad por defecto de Spring
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("/auth/**").permitAll() //Damos paso a solicitudes de autenticación, revisamos el resto
+                                .requestMatchers("/api/v1/auth/registeradmin").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/auth/**").permitAll() //Damos paso a solicitudes de autenticación, revisamos el resto
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManager ->
                         sessionManager
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).addFilterBefore(new JWTAuthorizationFilter(jwtUtilityService),
-                        UsernamePasswordAuthenticationFilter.class)
+                ).addFilterBefore(new JWTAuthorizationFilter(jwtUtilityService, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .authenticationEntryPoint((request, response, authException) -> {
-                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No autorizado");
                                 }))
                 .build();
     }

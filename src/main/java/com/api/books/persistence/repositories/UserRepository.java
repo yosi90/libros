@@ -8,7 +8,11 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
+    Optional<UserEntity> findByName(String name);
+
     Optional<UserEntity> findByEmail(String email);
+
+    Boolean existsByName(String name);
 
     @Query("SELECT u FROM UserEntity u WHERE TIMESTAMPDIFF(SECOND, u.lifeSpan, CURRENT_TIMESTAMP) >= :threshold")
     Optional<UserEntity> findFirstUpdatable(int threshold);

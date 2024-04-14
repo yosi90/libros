@@ -21,7 +21,7 @@ public class BookDTO extends DTOCosmicEntity {
         bookId = book.getId();
         name = book.getName();
         author = book.getAuthor();
-        read = book.getRead();
+        read = book.getIsRead();
         String chaptersUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/v1/book/{bookId}/chapters")

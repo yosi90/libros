@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface IUserService {
+public interface UserService {
 
     ResponseEntity<UserDTO> getUserById(Long userId);
 

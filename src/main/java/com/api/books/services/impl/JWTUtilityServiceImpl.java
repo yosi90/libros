@@ -1,9 +1,11 @@
 package com.api.books.services.impl;
 
-import com.api.books.services.IJWTUtilityService;
+import com.api.books.persistence.entities.RoleEntity;
+import com.api.books.services.JWTUtilityService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +27,10 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Service
-public class JWTUtilityServiceImpl implements IJWTUtilityService {
+public class JWTUtilityServiceImpl implements JWTUtilityService {
 
     @Value("classpath:jwtKeys/private_key.pem")
     private Resource privateKeyResource;
@@ -36,13 +39,14 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
     private Resource publicKeyResource;
 
     @Override
-    public String generateJWT(Long userId) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
+    public String generateJWT(Long userId, List<RoleEntity> roles) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
         PrivateKey privateKey = loadPrivateKey(privateKeyResource);
 
         JWSSigner signer = new RSASSASigner(privateKey);
         Date now = new Date();
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userId.toString())
+                .claim("roles", roles)
                 .issueTime(now)
                 .expirationTime(new Date(now.getTime() + 14400000))
                 .build();
@@ -54,17 +58,16 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
     @Override
     public JWTClaimsSet parseJWT(String jwt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
         PublicKey publicKey = loadPublicKey(publicKeyResource);
-
         SignedJWT signedJWT = SignedJWT.parse(jwt);
         JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
-        if(!signedJWT.verify(verifier)){
+        if (!signedJWT.verify(verifier)) {
             throw new JOSEException("Invalid signature");
         }
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-        if(claimsSet.getExpirationTime().before(new Date())){
+        if (claimsSet.getExpirationTime().before(new Date())) {
             throw new JOSEException("Expired token");
         }
-        return  claimsSet;
+        return claimsSet;
     }
 
     private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -73,11 +76,11 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
-                                //Esto se carga espacios en blanco
+        //Esto se carga espacios en blanco
         byte[] decodeKey = Base64.getDecoder().decode(privateKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-        return  keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodeKey));
+        return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decodeKey));
     }
 
     private PublicKey loadPublicKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -90,6 +93,6 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
         byte[] decodeKey = Base64.getDecoder().decode(publicKeyPEM);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-        return  keyFactory.generatePublic(new X509EncodedKeySpec(decodeKey));
+        return keyFactory.generatePublic(new X509EncodedKeySpec(decodeKey));
     }
 }
