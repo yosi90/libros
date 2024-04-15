@@ -2,6 +2,7 @@ package com.api.books.controllers;
 
 import com.api.books.persistence.entities.UserEntity;
 import com.api.books.services.AuthService;
+import com.api.books.services.models.dtos.JwtTokenDTO;
 import com.api.books.services.models.dtos.LoginDTO;
 import com.api.books.services.models.dtos.ResponseDTO;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class AuthControllers {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<String> login(@RequestBody LoginDTO loginRequest) throws Exception {
+    private ResponseEntity<JwtTokenDTO> login(@RequestBody LoginDTO loginRequest) throws Exception {
         return authService.login(loginRequest);
     }
 }

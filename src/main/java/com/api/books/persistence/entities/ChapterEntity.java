@@ -3,9 +3,12 @@ package com.api.books.persistence.entities;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,10 @@ public class ChapterEntity {
     @NotBlank
     @Size(min = 3, max = 30)
     private String name;
+
+    @Min(0)
+    @Max(100)
+    private Integer orderInBook;
 
     @NotBlank
     private String description;

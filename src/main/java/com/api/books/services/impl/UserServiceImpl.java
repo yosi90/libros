@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -93,6 +94,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<ResponseDTO> updateName(Long id, String nameNew) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            UserEntity previousUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            previousUser.setName(nameNew);
+            userRepository.save(previousUser);
+            response.newMessage("Nombre actualizado");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO> updateEmail(Long id, String emailNew) {
+        ResponseDTO response = new ResponseDTO();
+        try {
+            UserEntity previousUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            previousUser.setEmail(emailNew);
+            userRepository.save(previousUser);
+            response.newMessage("Email actualizado");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
     public ResponseEntity<ResponseDTO> updatePassword(Long id, String passwordNew) {
         ResponseDTO response = new ResponseDTO();
         try {
@@ -107,10 +136,8 @@ public class UserServiceImpl implements UserService {
             response.newMessage("Contraseña actualizada");
             return ResponseEntity.ok(response);
         } catch (EntityNotFoundException e) {
-            response.newError("Id no encontrada");
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            response.newError(e.toString());
             return ResponseEntity.internalServerError().build();
         }
     }
