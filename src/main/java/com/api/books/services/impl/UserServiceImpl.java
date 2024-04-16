@@ -4,7 +4,8 @@ import com.api.books.persistence.entities.UserEntity;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.UserService;
 import com.api.books.services.models.dtos.BookDTO;
-import com.api.books.services.models.dtos.ResponseDTO;
+import com.api.books.services.models.dtos.templates.PasswordUpdateDTO;
+import com.api.books.services.models.dtos.templates.ResponseDTO;
 import com.api.books.services.models.dtos.UserDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         try {
             UserEntity user = userRepository.findById(userId).orElse(null);
             if (user == null) return ResponseEntity.notFound().build();
-            return ResponseEntity.ok(user.ToDTO());
+            return ResponseEntity.ok(user.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
             List<UserDTO> userDTOS = new ArrayList<>();
             if (users.isEmpty()) return ResponseEntity.noContent().build();
             for (UserEntity userEntity : users)
-                userDTOS.add(userEntity.ToDTO());
+                userDTOS.add(userEntity.toDTO());
             return ResponseEntity.ok(userDTOS);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -94,52 +94,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> updateName(Long id, String nameNew) {
-        ResponseDTO response = new ResponseDTO();
+    public ResponseEntity<UserDTO> updateName(Long id, String nameNew) {
         try {
             UserEntity previousUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             previousUser.setName(nameNew);
-            userRepository.save(previousUser);
-            response.newMessage("Nombre actualizado");
-            return ResponseEntity.ok(response);
+            final UserEntity user = userRepository.save(previousUser);
+            return ResponseEntity.ok(user.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> updateEmail(Long id, String emailNew) {
-        ResponseDTO response = new ResponseDTO();
+    public ResponseEntity<UserDTO> updateEmail(Long id, String emailNew) {
         try {
             UserEntity previousUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             previousUser.setEmail(emailNew);
-            userRepository.save(previousUser);
-            response.newMessage("Email actualizado");
-            return ResponseEntity.ok(response);
+            final UserEntity user = userRepository.save(previousUser);
+            return ResponseEntity.ok(user.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> updatePassword(Long id, String passwordNew) {
-        ResponseDTO response = new ResponseDTO();
+    public ResponseEntity<UserDTO> updatePassword(Long id, PasswordUpdateDTO passwords) {
         try {
             UserEntity previousUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-            if (!passwordNew.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#ñÑ])[A-Za-z\\d@$!%*?&#ñÑ]{8,}$")) {
-                response.newError("Contraseña no válida");
-                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-            }
+            if (!passwords.getPasswordNew().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#ñÑ])[A-Za-z\\d@$!%*?&#ñÑ]{8,}$")
+                    || !verifyPassword(passwords.getPasswordOld(), previousUser.getPassword()))
+                return new ResponseEntity<>(new UserDTO(), HttpStatus.NOT_ACCEPTABLE);
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            previousUser.setPassword(encoder.encode(passwordNew));
-            userRepository.save(previousUser);
-            response.newMessage("Contraseña actualizada");
-            return ResponseEntity.ok(response);
+            previousUser.setPassword(encoder.encode(passwords.getPasswordNew()));
+            final UserEntity user = userRepository.save(previousUser);
+            return ResponseEntity.ok(user.toDTO());
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    private boolean verifyPassword(String enteredPassword, String storedPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(enteredPassword, storedPassword);
     }
 
     @Override

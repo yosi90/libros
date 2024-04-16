@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +51,11 @@ public class ChapterEntity {
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> charactersDTOs = new ArrayList<>();
         for (CharacterEntity character : characters)
-            charactersDTOs.add(character.ToDTO());
+            charactersDTOs.add(character.toDTO());
         return charactersDTOs;
     }
 
-    public ChapterDTO ToDTO() {
+    public ChapterDTO toDTO() {
         return new ChapterDTO(this);
     }
 }

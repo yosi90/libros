@@ -7,11 +7,9 @@ import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthService;
 import com.api.books.services.JWTUtilityService;
 import com.api.books.services.UserService;
-import com.api.books.services.models.dtos.JwtTokenDTO;
-import com.api.books.services.models.dtos.LoginDTO;
-import com.api.books.services.models.dtos.ResponseDTO;
-import com.api.books.services.models.dtos.UserDTO;
-import jakarta.persistence.EntityNotFoundException;
+import com.api.books.services.models.dtos.templates.JwtTokenDTO;
+import com.api.books.services.models.dtos.templates.LoginDTO;
+import com.api.books.services.models.dtos.templates.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,19 +84,19 @@ public class AuthServiceImpl implements AuthService {
 
     private UserEntity getTemplateUser() {
         int threshold = 3600;
-        Optional<UserEntity> userUpdatable = userRepository.findFirstUpdatable(threshold);
-        if (userUpdatable.isEmpty()) {
+        Optional<UserEntity> userTEMP = userRepository.findFirstUpdatable(threshold);
+        if (userTEMP.isEmpty()) {
             UserEntity userEntity = new UserEntity();
             userEntity.setName("NombreNoValido");
             userEntity.setEmail("emailn@oval.ido");
             userEntity.setPassword("ContraseñaNoValida");
             userEntity = userRepository.save(userEntity);
             return userEntity;
-        } else return userUpdatable.get();
+        }
+        return userTEMP.get();
     }
 
     private Optional<UserEntity> updateTemplateUser(UserEntity userTemplate, UserEntity updatedUser) {
-        ResponseDTO response = new ResponseDTO();
         try {
             userTemplate.setLifeSpan(updatedUser.getLifeSpan().plusYears(100));
             userTemplate.setName(updatedUser.getName());

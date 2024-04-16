@@ -15,12 +15,14 @@ public class BookDTO extends DTOCosmicEntity {
     private Long bookId;
     private String name;
     private String author;
+    private String cover;
     private boolean read;
 
     public BookDTO(BookEntity book) {
         bookId = book.getId();
         name = book.getName();
         author = book.getAuthor();
+        cover = book.getCover();
         read = book.getIsRead();
         String chaptersUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()

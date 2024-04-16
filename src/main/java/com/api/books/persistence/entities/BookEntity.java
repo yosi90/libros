@@ -3,6 +3,7 @@ package com.api.books.persistence.entities;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,8 +25,12 @@ public class BookEntity {
     private Long id;
 
     @NotBlank
-    @Size(min = 3, max = 30)
+    @Size(min = 3, max = 50)
     private String name;
+
+    @Lob
+    @Column(length = 100000)
+    private String cover = "";
 
     private Boolean isRead = false;
 
@@ -35,6 +40,7 @@ public class BookEntity {
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @JsonManagedReference
     private UserEntity owner;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -43,7 +49,7 @@ public class BookEntity {
     public List<ChapterDTO> getChaptersDTOs() {
         List<ChapterDTO> chapterDTOs = new ArrayList<>();
         for (ChapterEntity chapter : chapters)
-            chapterDTOs.add(chapter.ToDTO());
+            chapterDTOs.add(chapter.toDTO());
         return chapterDTOs;
     }
 
@@ -53,11 +59,11 @@ public class BookEntity {
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> characterDTOs = new ArrayList<>();
         for (CharacterEntity character : characters)
-            characterDTOs.add(character.ToDTO());
+            characterDTOs.add(character.toDTO());
         return characterDTOs;
     }
 
-    public BookDTO ToDTO() {
+    public BookDTO toDTO() {
         return new BookDTO(this);
     }
 }

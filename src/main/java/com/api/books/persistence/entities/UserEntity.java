@@ -2,6 +2,7 @@ package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.UserDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -11,7 +12,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -41,12 +41,13 @@ public class UserEntity {
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<BookEntity> books;
 
     public List<BookDTO> getBooksDTOs() {
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (BookEntity book : books)
-            bookDTOS.add(book.ToDTO());
+            bookDTOS.add(book.toDTO());
         return bookDTOS;
     }
 
@@ -58,7 +59,7 @@ public class UserEntity {
     )
     private List<RoleEntity> roles;
 
-    public UserDTO ToDTO() {
+    public UserDTO toDTO() {
         return new UserDTO(this);
     }
 }
