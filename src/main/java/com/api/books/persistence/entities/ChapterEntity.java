@@ -2,6 +2,7 @@ package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,6 +39,7 @@ public class ChapterEntity {
 
     @ManyToOne
     @JoinColumn(name = "origin_id", referencedColumnName = "id")
+    @JsonManagedReference
     private BookEntity origin;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)

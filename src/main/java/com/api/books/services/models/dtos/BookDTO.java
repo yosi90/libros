@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +19,9 @@ public class BookDTO extends DTOCosmicEntity {
     private String author;
     private String cover;
     private boolean read;
+    private Long ownerId;
+    private List<ChapterDTO> chapters;
+    private List<CharacterDTO> characters;
 
     public BookDTO(BookEntity book) {
         bookId = book.getId();
@@ -24,6 +29,9 @@ public class BookDTO extends DTOCosmicEntity {
         author = book.getAuthor();
         cover = book.getCover();
         read = book.getIsRead();
+        ownerId = book.getOwner().getId();
+        chapters = book.getChaptersDTOs();
+        characters = book.getCharactersDTOs();
         String chaptersUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/v1/book/{bookId}/chapters")

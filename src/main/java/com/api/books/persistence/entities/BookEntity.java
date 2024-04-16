@@ -3,6 +3,7 @@ package com.api.books.persistence.entities;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public class BookEntity {
     private UserEntity owner;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ChapterEntity> chapters;
 
     public List<ChapterDTO> getChaptersDTOs() {
@@ -54,6 +56,7 @@ public class BookEntity {
     }
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<CharacterEntity> characters;
 
     public List<CharacterDTO> getCharactersDTOs() {

@@ -12,11 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -36,8 +32,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseEntity<BookDTO> getBookById(Long bookId) {
+    public ResponseEntity<BookDTO> getBookById(Long bookId, Long userId) {
         try {
+            //verificar si el usuario que pide el libro es su dueño
             BookEntity book = bookRepository.findById(bookId).orElse(null);
             if (book == null) return ResponseEntity.notFound().build();
             return ResponseEntity.ok(book.toDTO());
@@ -102,30 +99,6 @@ public class BookServiceImpl implements BookService {
             return Optional.empty();
         }
     }
-
-    /*@Override
-    public ResponseEntity<BookDTO> updateCover(Long bookId, MultipartFile img) {
-        try {
-            Optional<BookEntity> bookOPT = bookRepository.findById(bookId);
-            if(bookOPT.isEmpty())
-                return ResponseEntity.notFound().build();
-            Path uploadPath = Paths.get("./media/covers");
-            Files.createDirectories(uploadPath);
-            Path filePath = uploadPath.resolve(String.format("%d.jpg", bookId));
-            Files.copy(img.getInputStream(), filePath);
-            String coverUri = ServletUriComponentsBuilder
-                    .fromCurrentContextPath()
-                    .path("/media/covers/{bookId}.jpg")
-                    .buildAndExpand(bookId)
-                    .toUriString();
-            BookEntity book = bookOPT.get();
-            book.setCover(coverUri);
-            book = bookRepository.save(book);
-            return ResponseEntity.ok(book.toDTO());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }*/
 
     @Override
     public ResponseEntity<BookDTO> updateCover(Long bookId, MultipartFile img) {

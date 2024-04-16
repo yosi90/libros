@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BookService {
 
-    ResponseEntity<BookDTO> getBookById(Long bookId);
+    ResponseEntity<BookDTO> getBookById(Long bookId, Long userId);
 
     ResponseEntity<List<BookDTO>> getAllBooks();
 

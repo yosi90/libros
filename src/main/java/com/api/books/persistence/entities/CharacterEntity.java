@@ -1,6 +1,7 @@
 package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class CharacterEntity {
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
+    @JsonManagedReference
     private BookEntity book;
 
     public CharacterDTO toDTO() {

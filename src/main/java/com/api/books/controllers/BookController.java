@@ -20,9 +20,9 @@ public class BookController {
     @Autowired
     BookService bookService;
 
-    @GetMapping("/{bookId}")
-    public ResponseEntity<BookDTO> getBookById(@PathVariable Long bookId) {
-        return bookService.getBookById(bookId);
+    @GetMapping("/{bookId}/{userId}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long bookId, @PathVariable Long userId) {
+        return bookService.getBookById(bookId, userId);
     }
 
     @GetMapping
