@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -34,9 +31,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<BookDTO> getBookById(Long bookId, Long userId) {
         try {
-            //verificar si el usuario que pide el libro es su dueño
             BookEntity book = bookRepository.findById(bookId).orElse(null);
             if (book == null) return ResponseEntity.notFound().build();
+            if (!Objects.equals(book.getOwner().getId(), userId)) return ResponseEntity.badRequest().build();
             return ResponseEntity.ok(book.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

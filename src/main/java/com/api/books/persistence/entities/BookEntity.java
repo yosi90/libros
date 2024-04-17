@@ -47,7 +47,6 @@ public class BookEntity {
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<ChapterEntity> chapters;
-
     public List<ChapterDTO> getChaptersDTOs() {
         List<ChapterDTO> chapterDTOs = new ArrayList<>();
         for (ChapterEntity chapter : chapters)
@@ -58,7 +57,6 @@ public class BookEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<CharacterEntity> characters;
-
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> characterDTOs = new ArrayList<>();
         for (CharacterEntity character : characters)
