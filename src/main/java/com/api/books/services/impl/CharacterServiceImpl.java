@@ -9,9 +9,13 @@ import com.api.books.services.CharacterService;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
 import com.api.books.services.models.dtos.templates.NewBook;
+import com.api.books.services.models.dtos.templates.NewCharacter;
+import com.api.books.services.models.dtos.templates.ResponseDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -57,12 +61,12 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
-    public ResponseEntity<CharacterDTO> addCharacter(CharacterEntity characterNew) {
+    public ResponseEntity<CharacterDTO> addCharacter(NewCharacter characterNew) {
         try {
             Optional<CharacterEntity> existingCharacter = characterRepository.findByName(characterNew.getName());
             if (existingCharacter.isPresent())
                 return new ResponseEntity<>(new CharacterDTO(), HttpStatus.CONFLICT);
-            Optional<BookEntity> existingBook = bookRepository.findByName(characterNew.getBook().getName());
+            Optional<BookEntity> existingBook = bookRepository.findById(characterNew.getBookId());
             if (existingBook.isEmpty())
                 return new ResponseEntity<>(new CharacterDTO(), HttpStatus.NOT_FOUND);
             CharacterEntity characterTEMP = getTemplateCharacter(existingBook.get());
@@ -88,7 +92,7 @@ public class CharacterServiceImpl implements CharacterService {
         return characterTEMP.get();
     }
 
-    private Optional<CharacterEntity> updateTemplateCharacter(CharacterEntity characterTemplate, CharacterEntity updatedCharacter) {
+    private Optional<CharacterEntity> updateTemplateCharacter(CharacterEntity characterTemplate, NewCharacter updatedCharacter) {
         try {
             characterTemplate.setName(updatedCharacter.getName());
             characterTemplate.setDescription(updatedCharacter.getDescription());
@@ -96,6 +100,21 @@ public class CharacterServiceImpl implements CharacterService {
             return Optional.of(characterFinal);
         } catch (Exception e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public ResponseEntity<CharacterDTO> updateCharacter(Long id, NewCharacter updatedCharacter) {
+        try {
+            CharacterEntity previousCharacter = characterRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Personaje no encontrado"));
+            previousCharacter.setName(updatedCharacter.getName());
+            previousCharacter.setDescription(updatedCharacter.getDescription());
+            CharacterEntity characterFinal = characterRepository.save(previousCharacter);
+            return ResponseEntity.ok(characterFinal.toDTO());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

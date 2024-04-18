@@ -48,7 +48,7 @@ public class ChapterEntity {
             joinColumns = @JoinColumn(name = "chapter_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id")
     )
-    private Set<CharacterEntity> characters;
+    private List<CharacterEntity> characters;
 
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> charactersDTOs = new ArrayList<>();

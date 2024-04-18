@@ -6,6 +6,7 @@ import com.api.books.services.CharacterService;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
 import com.api.books.services.models.dtos.templates.NewBook;
+import com.api.books.services.models.dtos.templates.NewCharacter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/character")
 public class Charactercontroller {
+
     @Autowired
     CharacterService characterService;
 
@@ -32,9 +34,16 @@ public class Charactercontroller {
     }
 
     @PostMapping
-    public ResponseEntity<CharacterDTO> addCharacter(@RequestBody @Valid CharacterEntity characterNew, BindingResult result) throws Exception {
+    public ResponseEntity<CharacterDTO> addCharacter(@RequestBody @Valid NewCharacter characterNew, BindingResult result) throws Exception {
         if (result != null && result.hasErrors())
             return new ResponseEntity<>(new CharacterDTO(), HttpStatus.NOT_ACCEPTABLE);
         return characterService.addCharacter(characterNew);
+    }
+
+    @PutMapping("/{characterId}")
+    public ResponseEntity<CharacterDTO> updateCharacter(@PathVariable Long characterId, @RequestBody @Valid NewCharacter characterNew, BindingResult result) throws Exception {
+        if (result != null && result.hasErrors())
+            return new ResponseEntity<>(new CharacterDTO(), HttpStatus.NOT_ACCEPTABLE);
+        return characterService.updateCharacter(characterId, characterNew);
     }
 }
