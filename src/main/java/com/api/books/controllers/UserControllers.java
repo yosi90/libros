@@ -59,7 +59,7 @@ public class UserControllers {
     @Operation(summary = "Obtener todos los usuarios",
             description = "Recupera una lista de todos los usuarios registrados.")
     @ApiResponse(responseCode = "200", description = "Lista de usuarios recuperada exitosamente.")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserRolesDTO>> getAllUsers() {
         return userService.getAllUsers();
     }
 

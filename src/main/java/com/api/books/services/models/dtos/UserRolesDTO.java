@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,12 +18,14 @@ public class UserRolesDTO {
     private Long userId;
     private String name;
     private String email;
+    private List<BookDTO> books;
     private List<RoleEntity> roles;
 
     public UserRolesDTO(UserEntity user) {
         userId = user.getId();
         name = user.getName();
         email = user.getEmail();
+        books = user.getBooksDTOs();
         roles = user.getRoles();
     }
 }

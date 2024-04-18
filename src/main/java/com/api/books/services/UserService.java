@@ -15,7 +15,7 @@ public interface UserService {
 
     ResponseEntity<UserRolesDTO> getUserRoles(Long userId);
 
-    ResponseEntity<List<UserDTO>> getAllUsers();
+    ResponseEntity<List<UserRolesDTO>> getAllUsers();
 
     ResponseEntity<List<BookDTO>> getBooks(Long userId);
 

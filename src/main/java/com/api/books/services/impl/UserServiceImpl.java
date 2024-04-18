@@ -59,13 +59,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserRolesDTO>> getAllUsers() {
         try {
+            if(!isADMIN())
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
             List<UserEntity> users = userRepository.findAll();
-            List<UserDTO> userDTOS = new ArrayList<>();
+            List<UserRolesDTO> userDTOS = new ArrayList<>();
             if (users.isEmpty()) return ResponseEntity.noContent().build();
             for (UserEntity userEntity : users)
-                userDTOS.add(userEntity.toDTO());
+                userDTOS.add(userEntity.toRolesDTO());
             return ResponseEntity.ok(userDTOS);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
