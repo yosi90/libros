@@ -58,7 +58,7 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<BookDTO> addBook(NewBook bookNew) {
         try {
             Optional<BookEntity> existingBook = bookRepository.findByName(bookNew.getTitle());
-            if (existingBook.isPresent())
+            if (existingBook.isPresent() && Objects.equals(existingBook.get().getOwner().getId(), bookNew.getOwnerId()))
                 return new ResponseEntity<>(new BookDTO(), HttpStatus.CONFLICT);
             BookEntity bookTEMP = getTemplateBook();
             Optional<BookEntity> bookOPT = updateTemplateBook(bookTEMP, bookNew);
