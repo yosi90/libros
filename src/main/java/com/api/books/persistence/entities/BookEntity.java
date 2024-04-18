@@ -4,6 +4,7 @@ import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -39,14 +40,15 @@ public class BookEntity {
     @Size(min = 3, max = 30)
     private String author;
 
+
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonIgnore
     private UserEntity owner;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<ChapterEntity> chapters;
+    @JsonBackReference(value = "book_chapters")
+    private List<ChapterEntity> chapters = new ArrayList<>();
     public List<ChapterDTO> getChaptersDTOs() {
         List<ChapterDTO> chapterDTOs = new ArrayList<>();
         for (ChapterEntity chapter : chapters)
@@ -55,8 +57,8 @@ public class BookEntity {
     }
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<CharacterEntity> characters;
+    @JsonBackReference(value = "book_characters")
+    private List<CharacterEntity> characters = new ArrayList<>();
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> characterDTOs = new ArrayList<>();
         for (CharacterEntity character : characters)

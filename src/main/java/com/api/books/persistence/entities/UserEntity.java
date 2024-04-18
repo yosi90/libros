@@ -2,6 +2,7 @@ package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.UserDTO;
+import com.api.books.services.models.dtos.UserRolesDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -40,8 +41,8 @@ public class UserEntity {
 
     private String password;
 
+    @JsonBackReference(value = "user_books")
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
     private List<BookEntity> books;
 
     public List<BookDTO> getBooksDTOs() {
@@ -62,4 +63,6 @@ public class UserEntity {
     public UserDTO toDTO() {
         return new UserDTO(this);
     }
+
+    public UserRolesDTO toRolesDTO() { return new UserRolesDTO(this); }
 }

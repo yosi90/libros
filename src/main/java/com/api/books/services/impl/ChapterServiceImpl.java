@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -41,7 +42,7 @@ public class ChapterServiceImpl implements ChapterService {
     public ResponseEntity<ChapterDTO> addChapter(NewChapter chapterNew) {
         try {
             Optional<ChapterEntity> existingChapter = chapterRepository.findByName(chapterNew.getName());
-            if (existingChapter.isPresent())
+            if (existingChapter.isPresent() && Objects.equals(existingChapter.get().getOrigin().getId(), chapterNew.getBookId()))
                 return new ResponseEntity<>(new ChapterDTO(), HttpStatus.CONFLICT);
             Optional<BookEntity> existingBook = bookRepository.findById(chapterNew.getBookId());
             if (existingBook.isEmpty())

@@ -2,6 +2,8 @@ package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -39,7 +41,7 @@ public class ChapterEntity {
 
     @ManyToOne
     @JoinColumn(name = "origin_id", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonIgnore
     private BookEntity origin;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -48,7 +50,8 @@ public class ChapterEntity {
             joinColumns = @JoinColumn(name = "chapter_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id")
     )
-    private List<CharacterEntity> characters;
+    @JsonBackReference(value = "chapter_characters")
+    private List<CharacterEntity> characters = new ArrayList<>();
 
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> charactersDTOs = new ArrayList<>();
