@@ -38,13 +38,7 @@ public class AuthControllers {
             @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
     })
     private ResponseEntity<ResponseDTO> register(@RequestBody @Valid UserEntity userNew, BindingResult result) throws Exception {
-        if (result != null && result.hasErrors()) {
-            ResponseDTO response = new ResponseDTO();
-            for (FieldError error : result.getFieldErrors())
-                response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
-            return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-        }
-        return authService.register(userNew);
+        return authService.register(userNew, result);
     }
 
     @PostMapping("/registeradmin")
@@ -64,7 +58,7 @@ public class AuthControllers {
                 response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
             return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
         }
-        return authService.registerAdmin(userNew);
+        return authService.registerAdmin(userNew, result);
     }
 
     @PostMapping("/login")

@@ -1,11 +1,11 @@
 package com.api.books.persistence.entities;
 
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -36,10 +36,14 @@ public class BookEntity {
 
     private Boolean isRead = false;
 
-    @NotBlank
-    @Size(min = 3, max = 30)
-    private String author;
-
+    @ManyToMany(mappedBy = "books_authored")
+    List<AuthorEntity> authors;
+    public List<AuthorDTO> getAuthorsDTOs() {
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        for (AuthorEntity author : authors)
+            authorDTOs.add(author.toDTO());
+        return authorDTOs;
+    }
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")

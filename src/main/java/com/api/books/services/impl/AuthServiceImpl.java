@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.util.*;
 
@@ -58,9 +60,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> register(UserEntity userNew) {
+    public ResponseEntity<ResponseDTO> register(UserEntity userNew, BindingResult result) {
+        ResponseDTO response = new ResponseDTO();
         try {
-            ResponseDTO response = new ResponseDTO();
+            if (result != null && result.hasErrors()) {
+                for (FieldError error : result.getFieldErrors())
+                    response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
             Optional<UserEntity> existingUser = userRepository.findByName(userNew.getName());
             if (existingUser.isPresent()) {
                 response.newError("Nombre en uso, por favor elija otro");
@@ -119,9 +126,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> registerAdmin(UserEntity userNew) {
+    public ResponseEntity<ResponseDTO> registerAdmin(UserEntity userNew, BindingResult result) {
+        ResponseDTO response = new ResponseDTO();
         try {
-            ResponseDTO response = new ResponseDTO();
+            if (result != null && result.hasErrors()) {
+                for (FieldError error : result.getFieldErrors())
+                    response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
             Optional<UserEntity> existingUser = userRepository.findByName(userNew.getName());
             if (existingUser.isPresent()) {
                 response.newError("Nombre en uso, por favor elija otro");

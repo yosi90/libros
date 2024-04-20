@@ -16,22 +16,28 @@ public class BookDTO extends DTOCosmicEntity {
 
     private Long bookId;
     private String name;
-    private String author;
     private String cover;
     private boolean read;
     private Long ownerId;
+    private List<AuthorDTO> authors;
     private List<ChapterDTO> chapters;
     private List<CharacterDTO> characters;
 
     public BookDTO(BookEntity book) {
         bookId = book.getId();
         name = book.getName();
-        author = book.getAuthor();
+        authors = book.getAuthorsDTOs();
         cover = book.getCover();
         read = book.getIsRead();
         ownerId = book.getOwner().getId();
         chapters = book.getChaptersDTOs();
         characters = book.getCharactersDTOs();
+        String authorsUri = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/book/{bookId}/authors")
+                .buildAndExpand(bookId)
+                .toUriString();
+        newURI("Authors", authorsUri);
         String chaptersUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/v1/book/{bookId}/chapters")

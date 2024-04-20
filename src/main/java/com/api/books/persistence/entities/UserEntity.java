@@ -1,5 +1,6 @@
 package com.api.books.persistence.entities;
 
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.UserDTO;
 import com.api.books.services.models.dtos.UserRolesDTO;
@@ -44,12 +45,21 @@ public class UserEntity {
     @JsonBackReference(value = "user_books")
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookEntity> books;
-
     public List<BookDTO> getBooksDTOs() {
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (BookEntity book : books)
             bookDTOS.add(book.toDTO());
         return bookDTOS;
+    }
+
+    @JsonBackReference(value = "user_authors")
+    @OneToMany(mappedBy = "userAuthors", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AuthorEntity> authors;
+    public List<AuthorDTO> getAuthorsDTOs() {
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        for (AuthorEntity author : authors)
+            authorDTOs.add(author.toDTO());
+        return authorDTOs;
     }
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

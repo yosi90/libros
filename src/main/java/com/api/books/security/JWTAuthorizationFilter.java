@@ -26,12 +26,11 @@ import java.util.Map;
 
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
-    @Autowired
     JWTUtilityService jwtUtilityService;
 
-    @Autowired
     CustomUserDetailsService userDetailsService;
 
+    @Autowired
     public JWTAuthorizationFilter(JWTUtilityService jwtUtilityService, CustomUserDetailsService userDetailsService) {
         this.jwtUtilityService = jwtUtilityService;
         this.userDetailsService = userDetailsService;

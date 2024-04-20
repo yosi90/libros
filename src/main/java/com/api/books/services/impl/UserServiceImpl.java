@@ -180,11 +180,9 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            for (GrantedAuthority authority : authorities) {
-                if ("ADMIN".equals(authority.getAuthority())) {
+            for (GrantedAuthority authority : authorities)
+                if ("ADMIN".equals(authority.getAuthority()))
                     return true;
-                }
-            }
         }
         return false;
     }
