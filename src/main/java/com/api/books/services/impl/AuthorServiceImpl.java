@@ -6,7 +6,7 @@ import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthorService;
 import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.UserDTO;
+import com.api.books.services.models.dtos.templates.NewAuthor;
 import com.api.books.services.models.dtos.templates.ResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,7 +35,21 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> addAuthor(AuthorDTO authorNew, BindingResult result) {
+    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        try {
+            List<AuthorEntity> authors = authorRepository.findAll();
+            List<AuthorDTO> authorDTOs = new ArrayList<>();
+            if (authors.isEmpty()) return ResponseEntity.noContent().build();
+            for (AuthorEntity authorEntity : authors)
+                authorDTOs.add(authorEntity.toDTO());
+            return ResponseEntity.ok(authorDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO> addAuthor(NewAuthor authorNew, BindingResult result) {
         ResponseDTO response = new ResponseDTO();
         try {
             if (result != null && result.hasErrors()) {
@@ -68,7 +84,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorTEMP.get();
     }
 
-    private Optional<AuthorEntity> updateTemplateAuthor(AuthorEntity authorTemplate, AuthorDTO updatedAuthor) {
+    private Optional<AuthorEntity> updateTemplateAuthor(AuthorEntity authorTemplate, NewAuthor updatedAuthor) {
         try {
             authorTemplate.setName(updatedAuthor.getName());
             Optional<UserEntity> user = userRepository.findById(updatedAuthor.getUserId());

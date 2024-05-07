@@ -2,7 +2,6 @@ package com.api.books.persistence.entities;
 
 import com.api.books.services.models.dtos.CharacterDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

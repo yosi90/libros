@@ -10,17 +10,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @OpenAPIDefinition
 @Configuration
 public class SwaggerConfig {
-
-    /*@Bean
-    public OpenAPI baseOpenAPI() {
-        return new OpenAPI().info(new Info().title("Book EndPoints").version("1.0.0").description("Bibliographic memory EndPoints"));
-    }*/
-
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info().title("Book EndPoints").version("1.0.0").description("Bibliographic memory EndPoints"))

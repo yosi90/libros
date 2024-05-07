@@ -1,14 +1,16 @@
 package com.api.books.services.impl;
 
 import com.api.books.persistence.entities.RoleEntity;
+import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.persistence.entities.UserEntity;
 import com.api.books.persistence.repositories.RoleRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthService;
 import com.api.books.services.JWTUtilityService;
-import com.api.books.services.UserService;
+import com.api.books.services.UniverseService;
 import com.api.books.services.models.dtos.templates.JwtTokenDTO;
 import com.api.books.services.models.dtos.templates.LoginDTO;
+import com.api.books.services.models.dtos.templates.NewUniverse;
 import com.api.books.services.models.dtos.templates.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,13 +29,13 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private JWTUtilityService jwtUtilityService;
+
+    @Autowired
+    private UniverseService universeService;
 
     @Override
     public ResponseEntity<JwtTokenDTO> login(LoginDTO login) throws Exception {
@@ -118,6 +120,9 @@ public class AuthServiceImpl implements AuthService {
             List<RoleEntity> roles = new ArrayList<>();
             roles.add(roleOTP.get());
             userTemplate.setRoles(roles);
+            NewUniverse sinUniverso = new NewUniverse("Sin universo", userTemplate.getId());
+            UniverseEntity universe = universeService.addUniverse(sinUniverso);
+            userTemplate.addUniverse(universe);
             UserEntity userFinal = userRepository.save(userTemplate);
             return Optional.of(userFinal);
         } catch (Exception e) {
@@ -156,7 +161,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Optional<UserEntity> updateTemplateAdmin(UserEntity userTemplate, UserEntity updatedUser) {
-        ResponseDTO response = new ResponseDTO();
         try {
             userTemplate.setLifeSpan(updatedUser.getLifeSpan().plusYears(100));
             userTemplate.setName(updatedUser.getName());
@@ -168,6 +172,9 @@ public class AuthServiceImpl implements AuthService {
             userTemplate.setPassword(encoder.encode(updatedUser.getPassword()));
             List<RoleEntity> roles = roleRepository.findAll();
             userTemplate.setRoles(roles);
+            NewUniverse sinUniverso = new NewUniverse("Sin universo", userTemplate.getId());
+            UniverseEntity universe = universeService.addUniverse(sinUniverso);
+            userTemplate.addUniverse(universe);
             UserEntity userFinal = userRepository.save(userTemplate);
             return Optional.of(userFinal);
         } catch (Exception e) {

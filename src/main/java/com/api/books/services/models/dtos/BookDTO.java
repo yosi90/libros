@@ -1,13 +1,15 @@
 package com.api.books.services.models.dtos;
 
+import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.services.models.entities.DTOCosmicEntity;
 import com.api.books.persistence.entities.BookEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -19,36 +21,23 @@ public class BookDTO extends DTOCosmicEntity {
     private String cover;
     private boolean read;
     private Long ownerId;
-    private List<AuthorDTO> authors;
-    private List<ChapterDTO> chapters;
-    private List<CharacterDTO> characters;
+    private Long universeId;
+    private Long sagaId;
+    private List<Long> authorIds = new ArrayList<>();
+    private List<ChapterDTO> chapters = new ArrayList<>();
+    private List<CharacterDTO> characters = new ArrayList<>();
 
     public BookDTO(BookEntity book) {
         bookId = book.getId();
         name = book.getName();
-        authors = book.getAuthorsDTOs();
         cover = book.getCover();
         read = book.getIsRead();
         ownerId = book.getOwner().getId();
+        universeId = book.getUniverseBooks().getId();
+        sagaId = book.getSagaBooks().getId();
+        if(!book.getAuthorsBooks().isEmpty())
+            authorIds = book.getAuthorsBooks().stream().map(AuthorEntity::getId).collect(Collectors.toList());
         chapters = book.getChaptersDTOs();
         characters = book.getCharactersDTOs();
-        String authorsUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/v1/book/{bookId}/authors")
-                .buildAndExpand(bookId)
-                .toUriString();
-        newURI("Authors", authorsUri);
-        String chaptersUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/v1/book/{bookId}/chapters")
-                .buildAndExpand(bookId)
-                .toUriString();
-        newURI("Chapters", chaptersUri);
-        String charactersUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/api/v1/book/{bookId}/characters")
-                .buildAndExpand(bookId)
-                .toUriString();
-        newURI("Characters", charactersUri);
     }
 }

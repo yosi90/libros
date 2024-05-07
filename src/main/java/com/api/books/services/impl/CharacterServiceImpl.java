@@ -2,20 +2,15 @@ package com.api.books.services.impl;
 
 import com.api.books.persistence.entities.BookEntity;
 import com.api.books.persistence.entities.CharacterEntity;
-import com.api.books.persistence.entities.UserEntity;
 import com.api.books.persistence.repositories.BookRepository;
 import com.api.books.persistence.repositories.CharacterRepository;
 import com.api.books.services.CharacterService;
-import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
-import com.api.books.services.models.dtos.templates.NewBook;
 import com.api.books.services.models.dtos.templates.NewCharacter;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

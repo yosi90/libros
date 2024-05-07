@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,19 +35,29 @@ public class BookEntity {
 
     private Boolean isRead = false;
 
-    @ManyToMany(mappedBy = "books_authored")
-    List<AuthorEntity> authors;
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @JsonIgnore
+    private UserEntity owner;
+
+    @ManyToMany(mappedBy = "booksAuthors")
+    List<AuthorEntity> authorsBooks;
     public List<AuthorDTO> getAuthorsDTOs() {
         List<AuthorDTO> authorDTOs = new ArrayList<>();
-        for (AuthorEntity author : authors)
+        for (AuthorEntity author : authorsBooks)
             authorDTOs.add(author.toDTO());
         return authorDTOs;
     }
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    @JoinColumn(name = "universe_id", referencedColumnName = "id")
     @JsonIgnore
-    private UserEntity owner;
+    private UniverseEntity universeBooks;
+
+    @ManyToOne
+    @JoinColumn(name = "saga_id", referencedColumnName = "id")
+    @JsonIgnore
+    private SagaEntity sagaBooks;
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference(value = "book_chapters")

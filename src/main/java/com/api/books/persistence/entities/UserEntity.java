@@ -1,9 +1,6 @@
 package com.api.books.persistence.entities;
 
-import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.BookDTO;
-import com.api.books.services.models.dtos.UserDTO;
-import com.api.books.services.models.dtos.UserRolesDTO;
+import com.api.books.services.models.dtos.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -42,16 +38,6 @@ public class UserEntity {
 
     private String password;
 
-    @JsonBackReference(value = "user_books")
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookEntity> books;
-    public List<BookDTO> getBooksDTOs() {
-        List<BookDTO> bookDTOS = new ArrayList<>();
-        for (BookEntity book : books)
-            bookDTOS.add(book.toDTO());
-        return bookDTOS;
-    }
-
     @JsonBackReference(value = "user_authors")
     @OneToMany(mappedBy = "userAuthors", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AuthorEntity> authors;
@@ -60,6 +46,42 @@ public class UserEntity {
         for (AuthorEntity author : authors)
             authorDTOs.add(author.toDTO());
         return authorDTOs;
+    }
+
+    @JsonBackReference(value = "user_universes")
+    @OneToMany(mappedBy = "userUniverses", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UniverseEntity> universes;
+    public List<UniverseDTO> getUniversesDTOs() {
+        List<UniverseDTO> universeDTOs = new ArrayList<>();
+        for (UniverseEntity universe : universes)
+            universeDTOs.add(universe.toDTO());
+        return universeDTOs;
+    }
+
+    public void addUniverse(UniverseEntity universe) {
+        if(universes == null)
+            universes = new ArrayList<>();
+        universes.add(universe);
+    }
+
+    @JsonBackReference(value = "user_sagas")
+    @OneToMany(mappedBy = "userSagas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SagaEntity> sagas;
+    public List<SagaDTO> getSagasDTOs() {
+        List<SagaDTO> sagaDTOs = new ArrayList<>();
+        for (SagaEntity saga : sagas)
+            sagaDTOs.add(saga.toDTO());
+        return sagaDTOs;
+    }
+
+    @JsonBackReference(value = "user_books")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BookEntity> books;
+    public List<BookDTO> getBooksDTOs() {
+        List<BookDTO> bookDTOS = new ArrayList<>();
+        for (BookEntity book : books)
+            bookDTOS.add(book.toDTO());
+        return bookDTOS;
     }
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/character")
-public class CharacterController {
+public class CharacterControllers {
 
     @Autowired
     CharacterService characterService;

@@ -75,7 +75,7 @@ public class BookServiceImpl implements BookService {
         if (bookTEMP.isEmpty()) {
             BookEntity bookEntity = new BookEntity();
             bookEntity.setName("bookTemplate");
-            bookEntity.setAuthors(new ArrayList<>());
+            bookEntity.setAuthorsBooks(new ArrayList<>());
             bookEntity = bookRepository.save(bookEntity);
             return bookEntity;
         }
@@ -85,7 +85,7 @@ public class BookServiceImpl implements BookService {
     private Optional<BookEntity> updateTemplateBook(BookEntity bookTemplate, NewBook updatedBook) {
         try {
             bookTemplate.setName(updatedBook.getTitle());
-            bookTemplate.setAuthors(updatedBook.getAuthorEntities());
+            bookTemplate.setAuthorsBooks(updatedBook.getAuthorEntities());
             Optional<UserEntity> userOPT = userRepository.findById(updatedBook.getOwnerId());
             if (userOPT.isEmpty())
                 throw new Exception("Dueño no encontrado");

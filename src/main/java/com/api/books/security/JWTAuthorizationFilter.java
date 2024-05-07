@@ -36,28 +36,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-    /*@Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String token = header.substring(7);
-        try {
-            JWTClaimsSet claims = jwtUtilityService.parseJWT(token);
-            Long userId = Long.parseLong(claims.getSubject());
-            UserDetails userDetails = userDetailsService.loadUserById(userId);
-            //UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, Collections.emptyList());
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | ParseException | JOSEException e) {
-            throw new RuntimeException(e);
-        }
-        filterChain.doFilter(request, response);
-    }*/
-
+    @SuppressWarnings({ "null", "unchecked" })
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {

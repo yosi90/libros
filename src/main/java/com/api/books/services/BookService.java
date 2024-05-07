@@ -1,6 +1,5 @@
 package com.api.books.services;
 
-import com.api.books.persistence.entities.BookEntity;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.templates.NewBook;
 import org.springframework.http.ResponseEntity;

@@ -28,18 +28,34 @@ public class AuthorEntity {
     @Size(min = 3, max = 50)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnore
+    private UserEntity userAuthors;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "author_universes",
+            joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "universe_id", referencedColumnName = "id")
+    )
+    private List<UniverseEntity> universesAuthors;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "author_sagas",
+            joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "saga_id", referencedColumnName = "id")
+    )
+    private List<SagaEntity> sagasAuthors;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "author_books",
             joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id")
     )
-    private List<BookEntity> books_authored;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonIgnore
-    private UserEntity userAuthors;
+    private List<BookEntity> booksAuthors;
 
     public AuthorDTO toDTO() { return new AuthorDTO(this); }
 }
