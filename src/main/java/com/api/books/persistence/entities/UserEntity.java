@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(exclude = { "authors", "universes", "sagas", "books", "roles" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

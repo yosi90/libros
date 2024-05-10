@@ -21,11 +21,11 @@ public class CharacterDTO extends DTOCosmicEntity {
         characterId = character.getId();
         name = character.getName();
         description = character.getDescription();
-        bookId = character.getBook().getId();
+        bookId = character.getBookCharacters().getId();
         String bookUri = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/v1/book/{bookId}")
-                .buildAndExpand(character.getBook().getId())
+                .buildAndExpand(character.getBookCharacters().getId())
                 .toUriString();
         newURI("Book", bookUri);
         String chaptersUri = ServletUriComponentsBuilder

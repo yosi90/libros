@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,6 +35,20 @@ public class UniverseServiceImpl implements UniverseService {
         this.universeRepository = universeRepository;
         this.sagaRepository = sagaRepository;
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public ResponseEntity<List<UniverseDTO>> getAllUniverses() {
+        try {
+            List<UniverseEntity> universes = universeRepository.findAll();
+            List<UniverseDTO> universeDTOs = new ArrayList<>();
+            if (universes.isEmpty()) return ResponseEntity.noContent().build();
+            for (UniverseEntity universeEntity : universes)
+                universeDTOs.add(universeEntity.toDTO());
+            return ResponseEntity.ok(universeDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @Override
@@ -61,15 +76,9 @@ public class UniverseServiceImpl implements UniverseService {
 
     @Override
     public UniverseEntity addUniverse(NewUniverse universeNew) {
-        ResponseDTO response = new ResponseDTO();
         try {
-            Optional<UniverseEntity> existingUniverse = universeRepository.findByName(universeNew.getName());
-            if (existingUniverse.isPresent() && Objects.equals(universeNew.getUserId(), existingUniverse.get().getUserUniverses().getId())) {
-                response.newError("Nombre en uso, por favor elija otro");
-                return new UniverseEntity();
-            }
             UniverseEntity universeTEMP = getTemplateUniverse();
-            return updateTemplateUniverse(universeTEMP, universeNew).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            return updateTemplateUniverse(universeTEMP, universeNew).orElseThrow(() -> new EntityNotFoundException("El universo no puedo ser creado"));
         } catch (Exception e) {
             return new UniverseEntity();
         }
@@ -80,7 +89,9 @@ public class UniverseServiceImpl implements UniverseService {
         if (universeTEMP.isEmpty()) {
             UniverseEntity universeEntity = new UniverseEntity();
             universeEntity.setName("universeTemplate");
+            universeEntity.setAuthorsUniverses(new ArrayList<>());
             universeEntity.setBooksUniverse(new ArrayList<>());
+            universeEntity.setSagasUniverse(new ArrayList<>());
             universeEntity = universeRepository.save(universeEntity);
             return universeEntity;
         }

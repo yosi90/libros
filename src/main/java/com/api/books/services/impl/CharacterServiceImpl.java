@@ -80,7 +80,7 @@ public class CharacterServiceImpl implements CharacterService {
             CharacterEntity characterEntity = new CharacterEntity();
             characterEntity.setName("characterTemplate");
             characterEntity.setDescription("Esto es una descripción no válida");
-            characterEntity.setBook(book);
+            characterEntity.setBookCharacters(book);
             characterEntity = characterRepository.save(characterEntity);
             return characterEntity;
         }

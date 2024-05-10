@@ -79,7 +79,7 @@ public class ChapterServiceImpl implements ChapterService {
             chapterTemplate.setName(updatedCharacter.getName());
             chapterTemplate.setDescription(updatedCharacter.getDescription());
             chapterTemplate.setOrderInBook(updatedCharacter.getOrderInBook());
-            chapterTemplate.setCharacters(characters);
+            chapterTemplate.setCharactersChapters(characters);
             ChapterEntity chapterFinal = chapterRepository.save(chapterTemplate);
             return Optional.of(chapterFinal);
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class ChapterServiceImpl implements ChapterService {
                 CharacterEntity character = characterRepository.findById(characterId).orElseThrow(() -> new EntityNotFoundException("Personaje no encontrado"));
                 characters.add(character);
             }
-            previousChapter.setCharacters(characters);
+            previousChapter.setCharactersChapters(characters);
             ChapterEntity characterFinal = chapterRepository.save(previousChapter);
             return ResponseEntity.ok(characterFinal.toDTO());
         } catch (EntityNotFoundException e) {

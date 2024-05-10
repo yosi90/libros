@@ -4,10 +4,15 @@ import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.templates.NewUniverse;
 import com.api.books.services.models.dtos.templates.ResponseDTO;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 public interface UniverseService {
+    
+    ResponseEntity<List<UniverseDTO>> getAllUniverses();
 
     ResponseEntity<ResponseDTO> addUniverse(NewUniverse universeNew, BindingResult result);
 

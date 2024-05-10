@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/universe")
 public class UniverseControllers {
 
-    @Autowired
-    private UniverseService universeService;
+    private final UniverseService universeService;
+
+    public UniverseControllers(UniverseService universeService) {
+        this.universeService = universeService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UniverseDTO>> getAllUniverses() {
+        return universeService.getAllUniverses();
+    }
 
     @PostMapping
-    @Operation(summary = "Crear un nuevo autor",
-            description = "Crea un nuevo autor utilizando los datos proporcionados en el cuerpo de la solicitud.")
+    @Operation(summary = "Crear un nuevo universo",
+            description = "Crea un nuevo universo utilizando los datos proporcionados en el cuerpo de la solicitud.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "El autor ha sido creado exitosamente."),
+            @ApiResponse(responseCode = "200", description = "El universo ha sido creado exitosamente."),
             @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
     })
     public ResponseEntity<ResponseDTO> addUniverse(@RequestBody @Valid NewUniverse universeNew, BindingResult result) {
@@ -32,11 +42,11 @@ public class UniverseControllers {
     }
 
     @PatchMapping("/{universeId}/name")
-    @Operation(summary = "Actualizar el nombre de un autor",
-            description = "Actualiza el nombre de un autor existente identificado por su ID.")
+    @Operation(summary = "Actualizar el nombre de un universo",
+            description = "Actualiza el nombre de un universo existente identificado por su ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "El nombre del autor ha sido actualizado exitosamente."),
-            @ApiResponse(responseCode = "404", description = "Autor no encontrado.")
+            @ApiResponse(responseCode = "200", description = "El nombre del universo ha sido actualizado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Universo no encontrado.")
     })
     public ResponseEntity<UniverseDTO> updateName(@PathVariable Long universeId, @RequestBody String nameNew) {
         return universeService.updateName(universeId, nameNew);

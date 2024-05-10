@@ -1,7 +1,10 @@
 package com.api.books.services;
 
 import com.api.books.persistence.entities.UserEntity;
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
+import com.api.books.services.models.dtos.SagaDTO;
+import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.UserRolesDTO;
 import com.api.books.services.models.dtos.templates.PasswordUpdateDTO;
 import com.api.books.services.models.dtos.templates.ResponseDTO;
@@ -15,9 +18,15 @@ public interface UserService {
 
     ResponseEntity<UserRolesDTO> getUserRoles(Long userId);
 
-    ResponseEntity<List<UserRolesDTO>> getAllUsers();
+    ResponseEntity<List<AuthorDTO>> getUserAuthors(Long userId);
 
-    ResponseEntity<List<BookDTO>> getBooks(Long userId);
+    ResponseEntity<List<UniverseDTO>> getUserUniverses(Long userId);
+
+    ResponseEntity<List<SagaDTO>> getUserSagas(Long userId);
+
+    ResponseEntity<List<BookDTO>> getUserBooks(Long userId);
+
+    ResponseEntity<List<UserRolesDTO>> getAllUsers();
 
     ResponseEntity<ResponseDTO> updateUser(Long id, UserEntity updatedUser);
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(exclude = { "owner", "authorsBooks", "universeBooks", "sagaBooks", "characters" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

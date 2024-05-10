@@ -1,40 +1,21 @@
 package com.api.books.services.models.dtos.templates;
 
-import com.api.books.persistence.entities.AuthorEntity;
-import com.api.books.persistence.entities.UniverseEntity;
-import com.api.books.persistence.repositories.AuthorRepository;
-import com.api.books.services.models.dtos.AuthorDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewSaga {
 
-    @Autowired
-    AuthorRepository authorRepository;
-
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("userId")
     private Long userId;
-    private UniverseEntity universe;
-    private List<AuthorDTO> authors = new ArrayList<>();
-
-    public NewSaga(String name, UniverseEntity universe) {
-        this.name = name;
-        this.userId = universe.getUserUniverses().getId();
-        this.universe = universe;
-    }
-
-    public List<AuthorEntity> getAuthorEntities() {
-        List<AuthorEntity> authorEntities = new ArrayList<>();
-        for (AuthorDTO authorDTO : authors)
-            authorEntities.add(authorRepository.findById(authorDTO.getAuthorId()).get());
-        return authorEntities;
-    }
+    @JsonProperty("author")
+    private String author;
+    @JsonProperty("universe")
+    private String universe;
 }

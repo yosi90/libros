@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(exclude = { "origin", "charactersChapters" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -48,11 +49,10 @@ public class ChapterEntity {
             inverseJoinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id")
     )
     @JsonBackReference(value = "chapter_characters")
-    private List<CharacterEntity> characters = new ArrayList<>();
-
+    private List<CharacterEntity> charactersChapters = new ArrayList<>();
     public List<CharacterDTO> getCharactersDTOs() {
         List<CharacterDTO> charactersDTOs = new ArrayList<>();
-        for (CharacterEntity character : characters)
+        for (CharacterEntity character : charactersChapters)
             charactersDTOs.add(character.toDTO());
         return charactersDTOs;
     }

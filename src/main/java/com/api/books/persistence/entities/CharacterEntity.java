@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
-@Builder
+@EqualsAndHashCode(exclude = { "bookCharacters" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -28,7 +28,7 @@ public class CharacterEntity {
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     @JsonIgnore
-    private BookEntity book;
+    private BookEntity bookCharacters;
 
     public CharacterDTO toDTO() {
         return new CharacterDTO(this);
