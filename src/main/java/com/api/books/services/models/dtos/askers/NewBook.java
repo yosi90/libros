@@ -1,4 +1,4 @@
-package com.api.books.services.models.dtos.templates;
+package com.api.books.services.models.dtos.askers;
 
 import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.persistence.repositories.AuthorRepository;

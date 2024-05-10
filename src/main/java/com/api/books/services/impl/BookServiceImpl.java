@@ -6,7 +6,8 @@ import com.api.books.persistence.repositories.BookRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.BookService;
 import com.api.books.services.models.dtos.BookDTO;
-import com.api.books.services.models.dtos.templates.NewBook;
+import com.api.books.services.models.dtos.askers.NewBook;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

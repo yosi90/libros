@@ -8,10 +8,11 @@ import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthService;
 import com.api.books.services.JWTUtilityService;
 import com.api.books.services.UniverseService;
-import com.api.books.services.models.dtos.templates.JwtTokenDTO;
-import com.api.books.services.models.dtos.templates.LoginDTO;
-import com.api.books.services.models.dtos.templates.NewUniverse;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.JwtTokenDTO;
+import com.api.books.services.models.dtos.askers.LoginDTO;
+import com.api.books.services.models.dtos.askers.NewUniverse;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

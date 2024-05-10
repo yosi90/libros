@@ -8,7 +8,8 @@ import com.api.books.persistence.repositories.ChapterRepository;
 import com.api.books.persistence.repositories.CharacterRepository;
 import com.api.books.services.ChapterService;
 import com.api.books.services.models.dtos.ChapterDTO;
-import com.api.books.services.models.dtos.templates.NewChapter;
+import com.api.books.services.models.dtos.askers.NewChapter;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

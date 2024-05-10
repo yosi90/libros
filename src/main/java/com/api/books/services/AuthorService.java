@@ -1,8 +1,8 @@
 package com.api.books.services;
 
 import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.templates.NewAuthor;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewAuthor;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import java.util.List;
 

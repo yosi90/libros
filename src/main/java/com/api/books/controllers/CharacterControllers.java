@@ -2,7 +2,8 @@ package com.api.books.controllers;
 
 import com.api.books.services.CharacterService;
 import com.api.books.services.models.dtos.CharacterDTO;
-import com.api.books.services.models.dtos.templates.NewCharacter;
+import com.api.books.services.models.dtos.askers.NewCharacter;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

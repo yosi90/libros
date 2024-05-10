@@ -2,8 +2,8 @@ package com.api.books.services;
 
 import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.services.models.dtos.UniverseDTO;
-import com.api.books.services.models.dtos.templates.NewUniverse;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewUniverse;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import java.util.List;
 

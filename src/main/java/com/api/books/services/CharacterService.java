@@ -1,7 +1,8 @@
 package com.api.books.services;
 
 import com.api.books.services.models.dtos.CharacterDTO;
-import com.api.books.services.models.dtos.templates.NewCharacter;
+import com.api.books.services.models.dtos.askers.NewCharacter;
+
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

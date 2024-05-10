@@ -1,7 +1,8 @@
 package com.api.books.services;
 
 import com.api.books.services.models.dtos.BookDTO;
-import com.api.books.services.models.dtos.templates.NewBook;
+import com.api.books.services.models.dtos.askers.NewBook;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 

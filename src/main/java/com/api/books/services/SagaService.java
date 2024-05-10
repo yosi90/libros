@@ -1,8 +1,8 @@
 package com.api.books.services;
 
 import com.api.books.services.models.dtos.SagaDTO;
-import com.api.books.services.models.dtos.templates.NewSaga;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewSaga;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import java.util.List;
 

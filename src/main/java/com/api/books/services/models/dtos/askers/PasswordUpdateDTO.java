@@ -1,4 +1,4 @@
-package com.api.books.services.models.dtos.templates;
+package com.api.books.services.models.dtos.askers;
 
 import lombok.Data;
 

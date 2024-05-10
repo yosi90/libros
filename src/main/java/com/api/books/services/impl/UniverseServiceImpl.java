@@ -1,15 +1,19 @@
 package com.api.books.services.impl;
 
+import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.persistence.entities.SagaEntity;
 import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.persistence.entities.UserEntity;
+import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.SagaRepository;
 import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.UniverseService;
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.UniverseDTO;
-import com.api.books.services.models.dtos.templates.NewUniverse;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewUniverse;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,12 +31,14 @@ import java.util.Optional;
 public class UniverseServiceImpl implements UniverseService {
 
     private final UniverseRepository universeRepository;
+    private final AuthorRepository authorRepository;
     private final SagaRepository sagaRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public UniverseServiceImpl(UniverseRepository universeRepository, SagaRepository sagaRepository, UserRepository userRepository) {
+    public UniverseServiceImpl(UniverseRepository universeRepository, AuthorRepository authorRepository, SagaRepository sagaRepository, UserRepository userRepository) {
         this.universeRepository = universeRepository;
+        this.authorRepository = authorRepository;
         this.sagaRepository = sagaRepository;
         this.userRepository = userRepository;
     }
@@ -103,10 +109,19 @@ public class UniverseServiceImpl implements UniverseService {
             universeTemplate.setName(updatedUniverse.getName());
             UserEntity user = userRepository.findById(updatedUniverse.getUserId()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             universeTemplate.setUserUniverses(user);
-            universeTemplate.setAuthorsUniverses(updatedUniverse.getAuthorEntities());
+            List<AuthorEntity> authors = new ArrayList<>();
+            for(AuthorDTO authorDTO: updatedUniverse.getAuthors()) {
+                AuthorEntity author = authorRepository.findById(authorDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+                List<UniverseEntity> authorUniverses = author.getUniversesAuthors();
+                authorUniverses.add(universeTemplate);
+                author.setUniversesAuthors(authorUniverses);
+                authorRepository.save(author);
+                authors.add(author);
+            }
+            universeTemplate.setAuthorsUniverses(authors);
             SagaEntity saga = new SagaEntity();
             saga.setName("Sin saga");
-            saga.setAuthorsSagas(updatedUniverse.getAuthorEntities());
+            saga.setAuthorsSagas(new ArrayList<>());
             saga.setUniverseSagas(universeTemplate);
             saga = sagaRepository.save(saga);
             universeTemplate.addSaga(saga);

@@ -2,8 +2,9 @@ package com.api.books.controllers;
 
 import com.api.books.services.AuthorService;
 import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.templates.NewAuthor;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewAuthor;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

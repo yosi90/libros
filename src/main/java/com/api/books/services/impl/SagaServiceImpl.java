@@ -9,9 +9,11 @@ import com.api.books.persistence.repositories.SagaRepository;
 import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.SagaService;
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.SagaDTO;
-import com.api.books.services.models.dtos.templates.NewSaga;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewSaga;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,8 @@ public class SagaServiceImpl implements SagaService {
     private final AuthorRepository authorRepository;
     private final UniverseRepository universeRepository;
 
-    public SagaServiceImpl(SagaRepository sagaRepository, UserRepository userRepository, AuthorRepository authorRepository, UniverseRepository universeRepository) {
+    public SagaServiceImpl(SagaRepository sagaRepository, UserRepository userRepository,
+            AuthorRepository authorRepository, UniverseRepository universeRepository) {
         this.sagaRepository = sagaRepository;
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
@@ -42,7 +45,8 @@ public class SagaServiceImpl implements SagaService {
         try {
             List<SagaEntity> sagas = sagaRepository.findAll();
             List<SagaDTO> sagaDTOs = new ArrayList<>();
-            if (sagas.isEmpty()) return ResponseEntity.noContent().build();
+            if (sagas.isEmpty())
+                return ResponseEntity.noContent().build();
             for (SagaEntity sagaEntity : sagas)
                 sagaDTOs.add(sagaEntity.toDTO());
             return ResponseEntity.ok(sagaDTOs);
@@ -56,7 +60,8 @@ public class SagaServiceImpl implements SagaService {
         ResponseDTO response = new ResponseDTO();
         try {
             Optional<SagaEntity> existingSaga = sagaRepository.findByName(sagaNew.getName());
-            if (existingSaga.isPresent() && Objects.equals(sagaNew.getUserId(), existingSaga.get().getUserSagas().getId())) {
+            if (existingSaga.isPresent()
+                    && Objects.equals(sagaNew.getUserId(), existingSaga.get().getUserSagas().getId())) {
                 response.newError("Nombre en uso, por favor elija otro");
                 return new ResponseEntity<>(response, HttpStatus.CONFLICT);
             }
@@ -87,11 +92,23 @@ public class SagaServiceImpl implements SagaService {
             if (user.isEmpty())
                 return Optional.empty();
             sagaTemplate.setUserSagas(user.get());
-            AuthorEntity author = authorRepository.findByName(updatedSaga.getAuthor()).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
             List<AuthorEntity> authors = new ArrayList<>();
-            authors.add(author);
+            for (AuthorDTO authorDTO : updatedSaga.getAuthors()) {
+                AuthorEntity author = authorRepository.findById(authorDTO.getAuthorId())
+                        .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+                List<SagaEntity> authorSagas = author.getSagasAuthors();
+                authorSagas.add(sagaTemplate);
+                author.setSagasAuthors(authorSagas);
+                authorRepository.save(author);
+                authors.add(author);
+            }
             sagaTemplate.setAuthorsSagas(authors);
-            UniverseEntity universe = universeRepository.findByName(updatedSaga.getUniverse()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            UniverseEntity universe = universeRepository.findByName(updatedSaga.getUniverse().getName())
+                    .orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            List<SagaEntity> universeSagas = universe.getSagasUniverse();
+            universeSagas.add(sagaTemplate);
+            universe.setSagasUniverse(universeSagas);
+            universeRepository.save(universe);
             sagaTemplate.setUniverseSagas(universe);
             SagaEntity sagaFinal = sagaRepository.save(sagaTemplate);
             return Optional.of(sagaFinal);
@@ -103,7 +120,8 @@ public class SagaServiceImpl implements SagaService {
     @Override
     public ResponseEntity<SagaDTO> updateName(Long id, String nameNew) {
         try {
-            SagaEntity previousSaga = sagaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            SagaEntity previousSaga = sagaRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
             previousSaga.setName(nameNew);
             final SagaEntity saga = sagaRepository.save(previousSaga);
             return ResponseEntity.ok(saga.toDTO());

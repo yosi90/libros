@@ -2,7 +2,8 @@ package com.api.books.controllers;
 
 import com.api.books.services.ChapterService;
 import com.api.books.services.models.dtos.ChapterDTO;
-import com.api.books.services.models.dtos.templates.NewChapter;
+import com.api.books.services.models.dtos.askers.NewChapter;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

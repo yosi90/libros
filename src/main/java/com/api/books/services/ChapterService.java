@@ -1,7 +1,8 @@
 package com.api.books.services;
 
 import com.api.books.services.models.dtos.ChapterDTO;
-import com.api.books.services.models.dtos.templates.NewChapter;
+import com.api.books.services.models.dtos.askers.NewChapter;
+
 import org.springframework.http.ResponseEntity;
 
 public interface ChapterService {

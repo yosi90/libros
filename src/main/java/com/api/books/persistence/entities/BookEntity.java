@@ -70,7 +70,7 @@ public class BookEntity {
         return chapterDTOs;
     }
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bookCharacters", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference(value = "book_characters")
     private List<CharacterEntity> characters = new ArrayList<>();
     public List<CharacterDTO> getCharactersDTOs() {

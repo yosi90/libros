@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.api.books.services.SagaService;
 import com.api.books.services.models.dtos.SagaDTO;
-import com.api.books.services.models.dtos.templates.NewSaga;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewSaga;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 

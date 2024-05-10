@@ -6,8 +6,9 @@ import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthorService;
 import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.templates.NewAuthor;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewAuthor;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

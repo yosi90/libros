@@ -6,8 +6,8 @@ import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.SagaDTO;
 import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.UserRolesDTO;
-import com.api.books.services.models.dtos.templates.PasswordUpdateDTO;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.PasswordUpdateDTO;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
 import com.api.books.services.models.dtos.UserDTO;
 import org.springframework.http.ResponseEntity;
 

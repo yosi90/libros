@@ -2,8 +2,9 @@ package com.api.books.controllers;
 
 import com.api.books.services.UniverseService;
 import com.api.books.services.models.dtos.UniverseDTO;
-import com.api.books.services.models.dtos.templates.NewUniverse;
-import com.api.books.services.models.dtos.templates.ResponseDTO;
+import com.api.books.services.models.dtos.askers.NewUniverse;
+import com.api.books.services.models.dtos.askers.ResponseDTO;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
