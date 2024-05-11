@@ -123,6 +123,7 @@ public class UniverseServiceImpl implements UniverseService {
             saga.setName("Sin saga");
             saga.setAuthorsSagas(new ArrayList<>());
             saga.setUniverseSagas(universeTemplate);
+            saga.setUserSagas(user);
             saga = sagaRepository.save(saga);
             universeTemplate.addSaga(saga);
             UniverseEntity universeFinal = universeRepository.save(universeTemplate);

@@ -30,11 +30,13 @@ public class BookEntity {
     @Size(min = 3, max = 50)
     private String name;
 
-    @Lob
-    @Column(length = 100000)
-    private String cover = "";
+    private String cover;
 
-    private Boolean isRead = false;
+    private int orderInSaga = -1;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
+    private BookStatusEntity statusBooks;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")

@@ -1,14 +1,24 @@
 package com.api.books.services.impl;
 
+import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.persistence.entities.BookEntity;
+import com.api.books.persistence.entities.BookStatusEntity;
+import com.api.books.persistence.entities.SagaEntity;
+import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.persistence.entities.UserEntity;
+import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.BookRepository;
+import com.api.books.persistence.repositories.BookStatusRepository;
+import com.api.books.persistence.repositories.SagaRepository;
+import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.BookService;
+import com.api.books.services.ImageService;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.askers.NewBook;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,13 +30,22 @@ import java.util.*;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-
     private final UserRepository userRepository;
+    private final AuthorRepository authorRepository;
+    private final UniverseRepository universeRepository;
+    private final SagaRepository sagaRepository;
+    private final BookStatusRepository bookStatusRepository;
+    private final ImageService imageService;
 
-    @Autowired
-    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository) {
+    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository, AuthorRepository authorRepository, 
+    UniverseRepository universeRepository, SagaRepository sagaRepository, BookStatusRepository bookStatusRepository, ImageService imageService) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.authorRepository = authorRepository;
+        this.universeRepository = universeRepository;
+        this.sagaRepository = sagaRepository;
+        this.bookStatusRepository = bookStatusRepository;
+        this.imageService = imageService;
     }
 
     @Override
@@ -56,13 +75,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseEntity<BookDTO> addBook(NewBook bookNew) {
+    public ResponseEntity<BookDTO> addBook(NewBook bookNew, MultipartFile cover) {
         try {
-            Optional<BookEntity> existingBook = bookRepository.findByName(bookNew.getTitle());
-            if (existingBook.isPresent() && Objects.equals(existingBook.get().getOwner().getId(), bookNew.getOwnerId()))
+            Optional<BookEntity> existingBook = bookRepository.findByName(bookNew.getName());
+            if (existingBook.isPresent() && Objects.equals(existingBook.get().getOwner().getId(), bookNew.getUserId()))
                 return new ResponseEntity<>(new BookDTO(), HttpStatus.CONFLICT);
             BookEntity bookTEMP = getTemplateBook();
-            Optional<BookEntity> bookOPT = updateTemplateBook(bookTEMP, bookNew);
+            Optional<BookEntity> bookOPT = updateTemplateBook(bookTEMP, bookNew, cover);
             if (bookOPT.isEmpty())
                 return ResponseEntity.unprocessableEntity().build();
             return ResponseEntity.ok(bookOPT.get().toDTO());
@@ -83,14 +102,38 @@ public class BookServiceImpl implements BookService {
         return bookTEMP.get();
     }
 
-    private Optional<BookEntity> updateTemplateBook(BookEntity bookTemplate, NewBook updatedBook) {
+    private Optional<BookEntity> updateTemplateBook(BookEntity bookTemplate, NewBook updatedBook, MultipartFile cover) {
         try {
-            bookTemplate.setName(updatedBook.getTitle());
-            bookTemplate.setAuthorsBooks(updatedBook.getAuthorEntities());
-            Optional<UserEntity> userOPT = userRepository.findById(updatedBook.getOwnerId());
-            if (userOPT.isEmpty())
-                throw new Exception("Dueño no encontrado");
-            bookTemplate.setOwner(userOPT.get());
+            bookTemplate.setName(updatedBook.getName());
+            UserEntity user = userRepository.findById(updatedBook.getUserId()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            bookTemplate.setOwner(user);
+            List<AuthorEntity> authors = new ArrayList<>();
+            for (Long authorId : updatedBook.getAuthorIds()) {
+                AuthorEntity author = authorRepository.findById(authorId)
+                        .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+                List<BookEntity> authorBooks = author.getBooksAuthors();
+                authorBooks.add(bookTemplate);
+                author.setBooksAuthors(authorBooks);
+                authorRepository.save(author);
+                authors.add(author);
+            }
+            bookTemplate.setAuthorsBooks(authors);
+            UniverseEntity universe = universeRepository.findById(updatedBook.getUniverseId()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            List<BookEntity> universeBooks = universe.getBooksUniverse();
+            universeBooks.add(bookTemplate);
+            universe.setBooksUniverse(universeBooks);
+            universeRepository.save(universe);
+            bookTemplate.setUniverseBooks(universe);
+            SagaEntity saga = sagaRepository.findById(updatedBook.getSagaId()).orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
+            List<BookEntity> sagaBooks = saga.getBooksSagas();
+            sagaBooks.add(bookTemplate);
+            saga.setBooksSagas(sagaBooks);
+            sagaRepository.save(saga);
+            bookTemplate.setSagaBooks(saga);
+            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus()).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+            bookTemplate.setStatusBooks(status);
+            String coverPath = imageService.saveImage(cover, user.getId());
+            bookTemplate.setCover(coverPath);
             BookEntity bookFinal = bookRepository.save(bookTemplate);
             return Optional.of(bookFinal);
         } catch (Exception e) {

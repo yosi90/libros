@@ -88,10 +88,8 @@ public class SagaServiceImpl implements SagaService {
     private Optional<SagaEntity> updateTemplateSaga(SagaEntity sagaTemplate, NewSaga updatedSaga) {
         try {
             sagaTemplate.setName(updatedSaga.getName());
-            Optional<UserEntity> user = userRepository.findById(updatedSaga.getUserId());
-            if (user.isEmpty())
-                return Optional.empty();
-            sagaTemplate.setUserSagas(user.get());
+            UserEntity user = userRepository.findById(updatedSaga.getUserId()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            sagaTemplate.setUserSagas(user);
             List<AuthorEntity> authors = new ArrayList<>();
             for (AuthorDTO authorDTO : updatedSaga.getAuthors()) {
                 AuthorEntity author = authorRepository.findById(authorDTO.getAuthorId())

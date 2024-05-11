@@ -14,7 +14,7 @@ public interface BookService {
 
     ResponseEntity<List<BookDTO>> getAllBooks();
 
-    ResponseEntity<BookDTO> addBook(NewBook bookNew);
+    ResponseEntity<BookDTO> addBook(NewBook bookNew, MultipartFile file);
 
     ResponseEntity<BookDTO> updateCover(Long bookId, MultipartFile img);
 }

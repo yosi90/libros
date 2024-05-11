@@ -5,6 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.api.books.persistence.entities.BookStatusEntity;
 import com.api.books.persistence.entities.RoleEntity;
 
 import jakarta.persistence.EntityManager;
@@ -22,6 +23,8 @@ public class DataInitializer {
     public void Init() {
         if(isEmpty("RoleEntity"))
             createRoles();
+        if(isEmpty("BookStatusEntity"))
+            createBookStatuses();
     }
 
     private boolean isEmpty(String entityName) {
@@ -36,5 +39,17 @@ public class DataInitializer {
 
         entityManager.persist(roleUser);
         entityManager.persist(roleAdmin);
+    }
+
+    private void createBookStatuses() {
+        BookStatusEntity statusToBuy = new BookStatusEntity("Por comprar");
+        BookStatusEntity statusOnHold = new BookStatusEntity("En espera");
+        BookStatusEntity statusOnGoing = new BookStatusEntity("En marcha");
+        BookStatusEntity statusRead = new BookStatusEntity("Leido");
+
+        entityManager.persist(statusToBuy);
+        entityManager.persist(statusOnHold);
+        entityManager.persist(statusOnGoing);
+        entityManager.persist(statusRead);
     }
 }

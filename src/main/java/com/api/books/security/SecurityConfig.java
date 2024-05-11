@@ -33,6 +33,7 @@ public class SecurityConfig {
                         authRequest
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/image/**").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement(sessionManager ->
                         sessionManager
