@@ -66,5 +66,9 @@ public class UniverseEntity {
         return bookDTOS;
     }
 
+    public UniverseEntity(String name) {
+        this.name = name;
+    }
+
     public UniverseDTO toDTO() { return new UniverseDTO(this); }
 }

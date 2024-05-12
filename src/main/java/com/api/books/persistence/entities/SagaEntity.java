@@ -54,5 +54,9 @@ public class SagaEntity {
         return bookDTOS;
     }
 
+    public SagaEntity(String name) {
+        this.name = name;
+    }
+
     public SagaDTO toDTO() { return new SagaDTO(this); }
 }

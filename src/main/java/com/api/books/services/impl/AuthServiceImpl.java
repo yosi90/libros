@@ -1,19 +1,21 @@
 package com.api.books.services.impl;
 
+import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.persistence.entities.RoleEntity;
+import com.api.books.persistence.entities.SagaEntity;
 import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.persistence.entities.UserEntity;
+import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.RoleRepository;
+import com.api.books.persistence.repositories.SagaRepository;
+import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthService;
 import com.api.books.services.JWTUtilityService;
-import com.api.books.services.UniverseService;
 import com.api.books.services.models.dtos.askers.JwtTokenDTO;
 import com.api.books.services.models.dtos.askers.LoginDTO;
-import com.api.books.services.models.dtos.askers.NewUniverse;
 import com.api.books.services.models.dtos.askers.ResponseDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,17 +28,21 @@ import java.util.*;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private JWTUtilityService jwtUtilityService;
-
-    @Autowired
-    private UniverseService universeService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final JWTUtilityService jwtUtilityService;
+    private final AuthorRepository authorRepository;
+    private final UniverseRepository universeRepository;
+    private final SagaRepository sagaRepository;
+    
+    public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, JWTUtilityService jwtUtilityService, AuthorRepository authorRepository, UniverseRepository universeRepository, SagaRepository sagaRepository){
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.jwtUtilityService = jwtUtilityService;
+        this.authorRepository = authorRepository;
+        this.universeRepository = universeRepository;
+        this.sagaRepository = sagaRepository;
+    }
 
     @Override
     public ResponseEntity<JwtTokenDTO> login(LoginDTO login) throws Exception {
@@ -121,11 +127,42 @@ public class AuthServiceImpl implements AuthService {
             List<RoleEntity> roles = new ArrayList<>();
             roles.add(roleOTP.get());
             userTemplate.setRoles(roles);
-            NewUniverse sinUniverso = new NewUniverse("Sin universo", userTemplate.getId());
-            UniverseEntity universe = universeService.addUniverse(sinUniverso);
-            userTemplate.addUniverse(universe);
-            UserEntity userFinal = userRepository.save(userTemplate);
-            return Optional.of(userFinal);
+            
+            UserEntity savedUser = userRepository.save(userTemplate);
+
+            AuthorEntity anon = new AuthorEntity();
+            anon.setName("Anónimo");
+            anon.setUserAuthors(savedUser);
+            List<AuthorEntity> authors = new ArrayList<>();
+            authors.add(anon);
+            authorRepository.save(anon);
+
+            UniverseEntity noUniverse = new UniverseEntity();
+            noUniverse.setName("Sin universo");
+            noUniverse.setUserUniverses(savedUser);
+            noUniverse.setAuthorsUniverses(authors);
+            List<UniverseEntity> universes = new ArrayList<>();
+            universes.add(noUniverse);
+            universeRepository.save(noUniverse);
+
+            SagaEntity noSaga = new SagaEntity();
+            noSaga.setName("Sin saga");
+            noSaga.setUserSagas(savedUser);
+            noSaga.setAuthorsSagas(authors);
+            noSaga.setUniverseSagas(noUniverse);
+            List<SagaEntity> sagas = new ArrayList<>();
+            sagas.add(noSaga);
+            sagaRepository.save(noSaga);
+
+            anon.setSagasAuthors(sagas);
+            noUniverse.setSagasUniverse(sagas);
+
+            userTemplate.setAuthors(authors);
+            userTemplate.setUniverses(universes);
+            userTemplate.setSagas(sagas);
+            userRepository.save(userTemplate);
+
+            return Optional.of(savedUser);
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -173,9 +210,9 @@ public class AuthServiceImpl implements AuthService {
             userTemplate.setPassword(encoder.encode(updatedUser.getPassword()));
             List<RoleEntity> roles = roleRepository.findAll();
             userTemplate.setRoles(roles);
-            NewUniverse sinUniverso = new NewUniverse("Sin universo", userTemplate.getId());
-            UniverseEntity universe = universeService.addUniverse(sinUniverso);
-            userTemplate.addUniverse(universe);
+            
+
+
             UserEntity userFinal = userRepository.save(userTemplate);
             return Optional.of(userFinal);
         } catch (Exception e) {
