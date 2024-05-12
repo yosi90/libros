@@ -10,7 +10,6 @@ import com.api.books.services.models.dtos.askers.NewAuthor;
 import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,10 +25,8 @@ import java.util.Optional;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-
     private final UserRepository userRepository;
 
-    @Autowired
     public AuthorServiceImpl(AuthorRepository authorRepository, UserRepository userRepository) {
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;

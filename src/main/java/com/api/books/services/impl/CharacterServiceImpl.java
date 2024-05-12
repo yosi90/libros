@@ -9,7 +9,6 @@ import com.api.books.services.models.dtos.CharacterDTO;
 import com.api.books.services.models.dtos.askers.NewCharacter;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,10 +21,8 @@ import java.util.Optional;
 public class CharacterServiceImpl implements CharacterService {
 
     private final CharacterRepository characterRepository;
-
     private final BookRepository bookRepository;
 
-    @Autowired
     public CharacterServiceImpl(CharacterRepository characterRepository, BookRepository bookRepository) {
         this.characterRepository = characterRepository;
         this.bookRepository = bookRepository;

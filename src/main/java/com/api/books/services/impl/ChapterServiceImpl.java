@@ -11,7 +11,6 @@ import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.askers.NewChapter;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,12 +24,9 @@ import java.util.Optional;
 public class ChapterServiceImpl implements ChapterService {
 
     private final ChapterRepository chapterRepository;
-
     private final BookRepository bookRepository;
-
     private final CharacterRepository characterRepository;
 
-    @Autowired
     public ChapterServiceImpl(ChapterRepository chapterRepository, BookRepository bookRepository, CharacterRepository characterRepository) {
         this.chapterRepository = chapterRepository;
         this.bookRepository = bookRepository;

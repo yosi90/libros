@@ -15,7 +15,6 @@ import com.api.books.services.models.dtos.askers.NewUniverse;
 import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,6 @@ public class UniverseServiceImpl implements UniverseService {
     private final SagaRepository sagaRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public UniverseServiceImpl(UniverseRepository universeRepository, AuthorRepository authorRepository, SagaRepository sagaRepository, UserRepository userRepository) {
         this.universeRepository = universeRepository;
         this.authorRepository = authorRepository;
