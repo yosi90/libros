@@ -5,10 +5,15 @@ import com.api.books.services.models.dtos.askers.JwtTokenDTO;
 import com.api.books.services.models.dtos.askers.LoginDTO;
 import com.api.books.services.models.dtos.askers.ResponseDTO;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
 public interface AuthService {
+
+    ResponseEntity<List<String>> getAllUserNames();
+    
     ResponseEntity<JwtTokenDTO> login(LoginDTO login) throws Exception;
 
     ResponseEntity<ResponseDTO> register(UserEntity user, BindingResult result) throws Exception;

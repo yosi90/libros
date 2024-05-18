@@ -45,6 +45,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public ResponseEntity<List<String>> getAllUserNames() {
+        try {
+            List<UserEntity> users = userRepository.findAll();
+            List<String> names = new ArrayList<>();
+            if (users.isEmpty())
+                return ResponseEntity.noContent().build();
+            for (UserEntity userEntity : users)
+                names.add(userEntity.getName());
+            return ResponseEntity.ok(names);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
     public ResponseEntity<JwtTokenDTO> login(LoginDTO login) throws Exception {
         try {
             Optional<UserEntity> userOPT = userRepository.findByEmail(login.getEmail());
