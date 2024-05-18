@@ -59,14 +59,37 @@ public class JWTUtilityServiceImpl implements JWTUtilityService {
         PublicKey publicKey = loadPublicKey(publicKeyResource);
         SignedJWT signedJWT = SignedJWT.parse(jwt);
         JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
-        if (!signedJWT.verify(verifier)) {
+
+        if (!signedJWT.verify(verifier))
             throw new JOSEException("Invalid signature");
-        }
+
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-        if (claimsSet.getExpirationTime().before(new Date())) {
-            throw new JOSEException("Expired token");
-        }
+        if (claimsSet.getExpirationTime().before(new Date()))
+            extendJWTExpiration(jwt);
+            
         return claimsSet;
+    }
+
+    @Override
+    public String extendJWTExpiration(String expiredToken) throws ParseException, JOSEException, NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+        SignedJWT expiredJWT = SignedJWT.parse(expiredToken);
+        PublicKey publicKey = loadPublicKey(publicKeyResource);
+        if (expiredJWT.verify(new RSASSAVerifier((RSAPublicKey) publicKey))) {
+            JWTClaimsSet claims = expiredJWT.getJWTClaimsSet();
+            Date expirationTime = claims.getExpirationTime();
+            Date now = new Date();
+            if (expirationTime != null && expirationTime.before(now)) {
+                Date newExpirationTime = new Date(now.getTime() + 14400000);
+                JWTClaimsSet newClaims = new JWTClaimsSet.Builder(claims)
+                        .expirationTime(newExpirationTime)
+                        .build();
+                SignedJWT newJWT = new SignedJWT(expiredJWT.getHeader(), newClaims);
+                PrivateKey privateKey = loadPrivateKey(privateKeyResource);
+                newJWT.sign(new RSASSASigner(privateKey));
+                return newJWT.serialize();
+            }
+        }
+        return expiredToken;
     }
 
     private PrivateKey loadPrivateKey(Resource resource) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {

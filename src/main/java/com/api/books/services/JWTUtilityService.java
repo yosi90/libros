@@ -11,6 +11,10 @@ import java.text.ParseException;
 import java.util.List;
 
 public interface JWTUtilityService {
+
     String generateJWT(Long userId, List<RoleEntity> roles) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException;
+
     JWTClaimsSet parseJWT(String jwt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException;
+
+    String extendJWTExpiration(String expiredToken) throws ParseException, JOSEException, NoSuchAlgorithmException, InvalidKeySpecException, IOException;
 }

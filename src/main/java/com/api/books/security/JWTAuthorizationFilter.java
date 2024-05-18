@@ -3,6 +3,7 @@ package com.api.books.security;
 import com.api.books.services.JWTUtilityService;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,16 +46,19 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             JWTClaimsSet claims = jwtUtilityService.parseJWT(token);
             Long userId = Long.parseLong(claims.getSubject());
 
-            // Obtener roles del token
             List<Map<String, String>> roles = (List<Map<String, String>>) claims.getClaim("roles");
 
-            // Convertir roles en authorities
             List<GrantedAuthority> authorities = new ArrayList<>();
-            for (Map<String, String> role : roles) {
+            for (Map<String, String> role : roles)
                 authorities.add(new SimpleGrantedAuthority(role.get("name")));
-            }
 
             UserDetails userDetails = userDetailsService.loadUserById(userId);
+
+            // Date expirationTime = claims.getExpirationTime();
+            // Date now = new Date();
+            // if (expirationTime != null && expirationTime.before(now))
+            //     token = jwtUtilityService.extendJWTExpiration(token);
+
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

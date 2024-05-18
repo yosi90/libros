@@ -28,6 +28,8 @@ public class UserEntity {
     @Size(min = 3, max = 30)
     private String name;
 
+    private String image = "";
+
     LocalDateTime lifeSpan = LocalDateTime.now();
 
     @NotBlank

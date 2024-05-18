@@ -23,8 +23,13 @@ public class ImageControllers {
         this.imageService = imageService;
     }
 
-    @GetMapping("/{userId}/{imagePath}")
-    public ResponseEntity<Resource> getImage(@PathVariable Long userId, @PathVariable String imagePath) throws MalformedURLException, FileNotFoundException {
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageService.upload(imagePath, userId));
+    @GetMapping("/cover/{userId}/{imagePath}")
+    public ResponseEntity<Resource> getCoverImage(@PathVariable Long userId, @PathVariable String imagePath) throws MalformedURLException, FileNotFoundException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageService.uploadCover(imagePath, userId));
+    }
+
+    @GetMapping("/profile/{userId}/{imagePath}")
+    public ResponseEntity<Resource> getProfileImage(@PathVariable Long userId, @PathVariable String imagePath) throws MalformedURLException, FileNotFoundException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageService.uploadProfile(imagePath, userId));
     }
 }

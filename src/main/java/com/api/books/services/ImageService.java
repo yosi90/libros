@@ -9,7 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
     
-    Resource upload(String fileName, Long userId) throws FileNotFoundException, MalformedURLException;
+    Resource uploadCover(String fileName, Long userId) throws FileNotFoundException, MalformedURLException;
+
+    Resource uploadProfile(String fileName, Long userId) throws FileNotFoundException, MalformedURLException;
+
+    boolean removeImage(String filename);
 
     String saveImage(MultipartFile file, Long userId) throws IOException;
 }

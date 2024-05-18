@@ -17,6 +17,7 @@ public class UserDTO extends DTOCosmicEntity {
     private Long userId;
     private String name;
     private String email;
+    private String image;
     private List<AuthorDTO> authors = new ArrayList<>();
     private List<UniverseDTO> universes = new ArrayList<>();
     private List<SagaDTO> sagas = new ArrayList<>();
@@ -26,6 +27,7 @@ public class UserDTO extends DTOCosmicEntity {
         userId = user.getId();
         name = user.getName();
         email = user.getEmail();
+        image = user.getImage();
         if(user.getAuthors() != null && !user.getAuthors().isEmpty())
             authors = user.getAuthorsDTOs();
         if(user.getUniverses() != null && !user.getUniverses().isEmpty())

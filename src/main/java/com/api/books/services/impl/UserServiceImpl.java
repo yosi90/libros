@@ -10,6 +10,7 @@ import com.api.books.persistence.repositories.BookRepository;
 import com.api.books.persistence.repositories.SagaRepository;
 import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
+import com.api.books.services.ImageService;
 import com.api.books.services.UserService;
 import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
@@ -25,10 +26,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,13 +43,15 @@ public class UserServiceImpl implements UserService {
     private final UniverseRepository universeRepository;
     private final SagaRepository sagaRepository;
     private final BookRepository bookRepository;
+    private final ImageService imageService;
 
-    public UserServiceImpl(UserRepository userRepository, AuthorRepository authorRepository, UniverseRepository universeRepository, SagaRepository sagaRepository, BookRepository bookRepository) {
+    public UserServiceImpl(UserRepository userRepository, AuthorRepository authorRepository, UniverseRepository universeRepository, SagaRepository sagaRepository, BookRepository bookRepository, ImageService imageService) {
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.universeRepository = universeRepository;
         this.sagaRepository = sagaRepository;
         this.bookRepository = bookRepository;
+        this.imageService = imageService;
     }
 
     @Override
@@ -168,6 +172,23 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             response.newError(e.toString());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> updateImage(MultipartFile file, Long userId) throws IOException {
+        try {
+            UserEntity user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            if (file.isEmpty())
+                return ResponseEntity.ok().build();
+            String nameFile = imageService.saveImage(file, userId);
+            String nameLastPhoto = user.getImage();
+            imageService.removeImage(nameLastPhoto);
+            user.setImage(nameFile);
+            userRepository.save(user);
+            return ResponseEntity.ok().body(user.toDTO());
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

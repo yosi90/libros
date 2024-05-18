@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -108,6 +110,16 @@ public class UserControllers {
     public ResponseEntity<ResponseDTO> createUser(@RequestBody @Valid UserEntity userNew, BindingResult result)
             throws Exception {
         return authService.registerAdmin(userNew, result);
+    }
+
+    @PatchMapping("/{userId}/image")
+    @Operation(summary = "Actualizar el nombre de un usuario", description = "Actualiza el nombre de un usuario existente identificado por su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El nombre del usuario ha sido actualizado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado.")
+    })
+    public ResponseEntity<UserDTO> updateName(@PathVariable Long userId, @RequestParam("image") MultipartFile image) throws IOException {
+        return userService.updateImage(image, userId);
     }
 
     @PatchMapping("/{userId}/name")

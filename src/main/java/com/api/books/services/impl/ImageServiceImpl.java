@@ -22,7 +22,7 @@ public class ImageServiceImpl implements ImageService {
     private static final String STATIC = "static/";
 
     @Override
-    public Resource upload(String fileName, Long userId) throws FileNotFoundException, MalformedURLException {
+    public Resource uploadCover(String fileName, Long userId) throws FileNotFoundException, MalformedURLException {
         Path rootFile = getPath(STATIC + userId + "/" + fileName);
         if(Files.exists(rootFile) && Files.isReadable(rootFile)) {
             return new UrlResource(rootFile.toUri());
@@ -32,7 +32,19 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    private boolean removeImage(String filename) {
+    @Override
+    public Resource uploadProfile(String fileName, Long userId) throws FileNotFoundException, MalformedURLException {
+        Path rootFile = getPath(STATIC + userId + "/" + fileName);
+        if(Files.exists(rootFile) && Files.isReadable(rootFile)) {
+            return new UrlResource(rootFile.toUri());
+        } else {
+            rootFile = getPath("profile.png");
+            return new UrlResource(rootFile.toUri());
+        }
+    }
+
+    @Override
+    public boolean removeImage(String filename) {
         if (filename == null || filename.length() == 0)
             return false;
         Path path = getPath(STATIC + filename);

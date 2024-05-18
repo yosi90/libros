@@ -10,7 +10,9 @@ import com.api.books.services.models.dtos.askers.PasswordUpdateDTO;
 import com.api.books.services.models.dtos.askers.ResponseDTO;
 import com.api.books.services.models.dtos.UserDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -29,6 +31,8 @@ public interface UserService {
     ResponseEntity<List<UserRolesDTO>> getAllUsers();
 
     ResponseEntity<ResponseDTO> updateUser(Long id, UserEntity updatedUser);
+
+    ResponseEntity<UserDTO> updateImage(MultipartFile file, Long userId) throws IOException;
 
     ResponseEntity<UserDTO> updateName(Long id, String nameNew);
 
