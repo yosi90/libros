@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.api.books.services.SagaService;
 import com.api.books.services.models.dtos.SagaDTO;
 import com.api.books.services.models.dtos.askers.NewSaga;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedSagaDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +35,7 @@ public class SagaControllers {
             @ApiResponse(responseCode = "200", description = "La saga ha sido creado exitosamente."),
             @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
     })
-    public ResponseEntity<ResponseDTO> addSaga(@RequestBody NewSaga sagaNew) {
+    public ResponseEntity<CreatedSagaDTO> addSaga(@RequestBody NewSaga sagaNew) {
         return sagaService.addSaga(sagaNew);
     }
 

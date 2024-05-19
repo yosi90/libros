@@ -30,8 +30,7 @@ public class SagaDTO extends DTOCosmicEntity {
         userId = saga.getUserSagas().getId();
         if (saga.getAuthorsSagas() != null && !saga.getAuthorsSagas().isEmpty())
             authorIds = saga.getAuthorsSagas().stream().map(AuthorEntity::getId).collect(Collectors.toList());
-        if (sagaId > 1)
-            universeId = saga.getUniverseSagas().getId();
+        universeId = saga.getUniverseSagas().getId();
         if (saga.getBooksSagas() != null && !saga.getBooksSagas().isEmpty())
             bookIds = saga.getBooksSagas().stream().map(BookEntity::getId).collect(Collectors.toList());
     }

@@ -3,7 +3,6 @@ package com.api.books.controllers;
 import com.api.books.services.AuthorService;
 import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.askers.NewAuthor;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +35,7 @@ public class AuthorControllers {
             @ApiResponse(responseCode = "200", description = "El autor ha sido creado exitosamente."),
             @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
     })
-    public ResponseEntity<ResponseDTO> createAuthor(@RequestBody @Valid NewAuthor authorNew, BindingResult result) {
+    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody @Valid NewAuthor authorNew, BindingResult result) {
         return authorService.addAuthor(authorNew, result);
     }
 

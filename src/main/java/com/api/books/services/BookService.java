@@ -2,6 +2,7 @@ package com.api.books.services;
 
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.askers.NewBook;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedBookDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,7 @@ public interface BookService {
 
     ResponseEntity<List<BookDTO>> getAllBooks();
 
-    ResponseEntity<BookDTO> addBook(NewBook bookNew, MultipartFile file);
+    ResponseEntity<CreatedBookDTO> addBook(NewBook bookNew, MultipartFile file);
 
     ResponseEntity<BookDTO> updateCover(Long bookId, MultipartFile img);
 }

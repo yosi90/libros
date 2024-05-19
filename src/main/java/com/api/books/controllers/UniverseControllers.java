@@ -3,7 +3,7 @@ package com.api.books.controllers;
 import com.api.books.services.UniverseService;
 import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.askers.NewUniverse;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedUniverseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,7 +38,7 @@ public class UniverseControllers {
             @ApiResponse(responseCode = "200", description = "El universo ha sido creado exitosamente."),
             @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
     })
-    public ResponseEntity<ResponseDTO> addUniverse(@RequestBody @Valid NewUniverse universeNew, BindingResult result) {
+    public ResponseEntity<CreatedUniverseDTO> addUniverse(@RequestBody @Valid NewUniverse universeNew, BindingResult result) {
         return universeService.addUniverse(universeNew, result);
     }
 

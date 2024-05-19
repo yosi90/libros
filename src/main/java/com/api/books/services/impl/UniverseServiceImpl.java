@@ -12,14 +12,13 @@ import com.api.books.services.UniverseService;
 import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.askers.NewUniverse;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedUniverseDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,23 +55,16 @@ public class UniverseServiceImpl implements UniverseService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> addUniverse(NewUniverse universeNew, BindingResult result) {
-        ResponseDTO response = new ResponseDTO();
+    public ResponseEntity<CreatedUniverseDTO> addUniverse(NewUniverse universeNew, BindingResult result) {
         try {
-            if (result != null && result.hasErrors()) {
-                for (FieldError error : result.getFieldErrors())
-                    response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
-                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-            }
+            if (result != null && result.hasErrors())
+                return ResponseEntity.unprocessableEntity().build();
             Optional<UniverseEntity> existingUniverse = universeRepository.findByName(universeNew.getName());
-            if (existingUniverse.isPresent() && Objects.equals(universeNew.getUserId(), existingUniverse.get().getUserUniverses().getId())) {
-                response.newError("Nombre en uso, por favor elija otro");
-                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-            }
+            if (existingUniverse.isPresent() && Objects.equals(universeNew.getUserId(), existingUniverse.get().getUserUniverses().getId()))
+                return new ResponseEntity<>(new CreatedUniverseDTO(), HttpStatus.CONFLICT);
             UniverseEntity universeTEMP = getTemplateUniverse();
-            updateTemplateUniverse(universeTEMP, universeNew).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
-            response.newMessage("Usuario creado");
-            return ResponseEntity.ok(response);
+            UniverseEntity universeEntity = updateTemplateUniverse(universeTEMP, universeNew).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            return ResponseEntity.ok(universeEntity.toCDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -110,21 +102,26 @@ public class UniverseServiceImpl implements UniverseService {
             List<AuthorEntity> authors = new ArrayList<>();
             for(AuthorDTO authorDTO: updatedUniverse.getAuthors()) {
                 AuthorEntity author = authorRepository.findById(authorDTO.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
-                List<UniverseEntity> authorUniverses = author.getUniversesAuthors();
-                authorUniverses.add(universeTemplate);
-                author.setUniversesAuthors(authorUniverses);
-                authorRepository.save(author);
                 authors.add(author);
             }
             universeTemplate.setAuthorsUniverses(authors);
             SagaEntity saga = new SagaEntity();
             saga.setName("Sin saga");
-            saga.setAuthorsSagas(new ArrayList<>());
+            saga.setAuthorsSagas(authors);
             saga.setUniverseSagas(universeTemplate);
             saga.setUserSagas(user);
             saga = sagaRepository.save(saga);
             universeTemplate.addSaga(saga);
             UniverseEntity universeFinal = universeRepository.save(universeTemplate);
+            for(AuthorEntity author: authors) {
+                List<UniverseEntity> authorUniverses = author.getUniversesAuthors();
+                authorUniverses.add(universeFinal);
+                author.setUniversesAuthors(authorUniverses);
+                List<SagaEntity> authorSagas = author.getSagasAuthors();
+                authorSagas.add(saga);
+                author.setSagasAuthors(authorSagas);
+                authorRepository.save(author);
+            }
             return Optional.of(universeFinal);
         } catch (Exception e) {
             return Optional.empty();

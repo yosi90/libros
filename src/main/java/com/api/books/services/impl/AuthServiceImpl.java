@@ -142,6 +142,7 @@ public class AuthServiceImpl implements AuthService {
             List<RoleEntity> roles = new ArrayList<>();
             roles.add(roleOTP.get());
             userTemplate.setRoles(roles);
+            userTemplate.setImage("profile.png");
             
             UserEntity savedUser = userRepository.save(userTemplate);
 
@@ -159,6 +160,8 @@ public class AuthServiceImpl implements AuthService {
             List<UniverseEntity> universes = new ArrayList<>();
             universes.add(noUniverse);
             universeRepository.save(noUniverse);
+
+            anon.setUniversesAuthors(universes);
 
             SagaEntity noSaga = new SagaEntity();
             noSaga.setName("Sin saga");
@@ -225,9 +228,8 @@ public class AuthServiceImpl implements AuthService {
             userTemplate.setPassword(encoder.encode(updatedUser.getPassword()));
             List<RoleEntity> roles = roleRepository.findAll();
             userTemplate.setRoles(roles);
+            userTemplate.setImage("profile.png");
             
-
-
             UserEntity userFinal = userRepository.save(userTemplate);
             return Optional.of(userFinal);
         } catch (Exception e) {

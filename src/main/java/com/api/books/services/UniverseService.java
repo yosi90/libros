@@ -3,7 +3,7 @@ package com.api.books.services;
 import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.services.models.dtos.UniverseDTO;
 import com.api.books.services.models.dtos.askers.NewUniverse;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedUniverseDTO;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface UniverseService {
     
     ResponseEntity<List<UniverseDTO>> getAllUniverses();
 
-    ResponseEntity<ResponseDTO> addUniverse(NewUniverse universeNew, BindingResult result);
+    ResponseEntity<CreatedUniverseDTO> addUniverse(NewUniverse universeNew, BindingResult result);
 
     UniverseEntity addUniverse(NewUniverse universeNew);
 

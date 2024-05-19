@@ -3,6 +3,7 @@ package com.api.books.controllers;
 import com.api.books.services.BookService;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.askers.NewBook;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedBookDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +50,7 @@ public class BookControllers {
             @ApiResponse(responseCode = "409", description = "Conflicto: Ya existe un libro con el mismo título."),
             @ApiResponse(responseCode = "404", description = "Dueño del libro no encontrado.")
     })
-    public ResponseEntity<BookDTO> addBook(
+    public ResponseEntity<CreatedBookDTO> addBook(
             @RequestParam("name") String name,
             @RequestParam("userId") String userId,
             @RequestParam("orderInSaga") String orderInSaga,

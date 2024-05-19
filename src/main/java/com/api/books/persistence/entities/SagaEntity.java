@@ -1,7 +1,9 @@
 package com.api.books.persistence.entities;
 
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.SagaDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedSagaDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -38,6 +40,12 @@ public class SagaEntity {
 
     @ManyToMany(mappedBy = "sagasAuthors")
     List<AuthorEntity> authorsSagas;
+    public List<AuthorDTO> getAuthorsDTOs() {
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        for (AuthorEntity author : authorsSagas)
+            authorDTOs.add(author.toDTO());
+        return authorDTOs;
+    }
 
     @ManyToOne
     @JoinColumn(name = "universe_id", referencedColumnName = "id")
@@ -59,4 +67,6 @@ public class SagaEntity {
     }
 
     public SagaDTO toDTO() { return new SagaDTO(this); }
+
+    public CreatedSagaDTO toCDTO() { return new CreatedSagaDTO(this); }
 }

@@ -1,8 +1,10 @@
 package com.api.books.persistence.entities;
 
+import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.SagaDTO;
 import com.api.books.services.models.dtos.UniverseDTO;
+import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedUniverseDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -40,9 +42,17 @@ public class UniverseEntity {
     @ManyToMany(mappedBy = "universesAuthors")
     List<AuthorEntity> authorsUniverses;
 
+    public List<AuthorDTO> getAuthorsDTOs() {
+        List<AuthorDTO> authorDTOs = new ArrayList<>();
+        for (AuthorEntity author : authorsUniverses)
+            authorDTOs.add(author.toDTO());
+        return authorDTOs;
+    }
+
     @JsonBackReference(value = "universe_sagas")
     @OneToMany(mappedBy = "universeSagas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SagaEntity> sagasUniverse;
+
     public List<SagaDTO> getSagasDTOs() {
         List<SagaDTO> sagaDTOs = new ArrayList<>();
         for (SagaEntity saga : sagasUniverse)
@@ -51,7 +61,7 @@ public class UniverseEntity {
     }
 
     public void addSaga(SagaEntity saga) {
-        if(sagasUniverse == null)
+        if (sagasUniverse == null)
             sagasUniverse = new ArrayList<>();
         sagasUniverse.add(saga);
     }
@@ -59,6 +69,7 @@ public class UniverseEntity {
     @JsonBackReference(value = "universe_books")
     @OneToMany(mappedBy = "universeBooks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BookEntity> booksUniverse;
+
     public List<BookDTO> getBooksDTOs() {
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (BookEntity book : booksUniverse)
@@ -70,5 +81,11 @@ public class UniverseEntity {
         this.name = name;
     }
 
-    public UniverseDTO toDTO() { return new UniverseDTO(this); }
+    public UniverseDTO toDTO() {
+        return new UniverseDTO(this);
+    }
+
+    public CreatedUniverseDTO toCDTO() {
+        return new CreatedUniverseDTO(this);
+    }
 }

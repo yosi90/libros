@@ -7,14 +7,12 @@ import com.api.books.persistence.repositories.UserRepository;
 import com.api.books.services.AuthorService;
 import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.askers.NewAuthor;
-import com.api.books.services.models.dtos.askers.ResponseDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,25 +45,20 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> addAuthor(NewAuthor authorNew, BindingResult result) {
-        ResponseDTO response = new ResponseDTO();
+    public ResponseEntity<AuthorDTO> addAuthor(NewAuthor authorNew, BindingResult result) {
         try {
             if (result != null && result.hasErrors()) {
-                for (FieldError error : result.getFieldErrors())
-                    response.newError(String.format("%s: %s", error.getField(), error.getDefaultMessage()));
-                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+                return ResponseEntity.unprocessableEntity().build();
             }
             Optional<AuthorEntity> existingAuthor = authorRepository.findByName(authorNew.getName());
             if (existingAuthor.isPresent() && Objects.equals(authorNew.getUserId(), existingAuthor.get().getUserAuthors().getId())) {
-                response.newError("Nombre en uso, por favor elija otro");
-                return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new AuthorDTO(), HttpStatus.CONFLICT);
             }
             AuthorEntity authorTEMP = getTemplateAuthor();
             Optional<AuthorEntity> authorOPT = updateTemplateAuthor(authorTEMP, authorNew);
             if (authorOPT.isEmpty())
                 return ResponseEntity.unprocessableEntity().build();
-            response.newMessage("Usuario creado");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(authorOPT.get().toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
