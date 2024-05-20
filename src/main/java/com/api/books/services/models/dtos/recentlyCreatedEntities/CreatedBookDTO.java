@@ -37,7 +37,9 @@ public class CreatedBookDTO {
         cover = book.getCover();
         status = book.getStatusBooks().toDTO();
         userId = book.getOwner().getId();
+        universeId =  book.getUniverseBooks().getId();
         universe = book.getUniverseBooks().toDTO();
+        sagaId = book.getSagaBooks().getId();
         saga = book.getSagaBooks().toDTO();
         if(!book.getAuthorsBooks().isEmpty())
             authors = book.getAuthorsDTOs();
