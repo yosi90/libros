@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -35,15 +36,15 @@ public class AuthorEntity {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "author_universes", joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "universe_id", referencedColumnName = "id"))
-    private List<UniverseEntity> universesAuthors;
+    private List<UniverseEntity> universesAuthors = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "author_sagas", joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "saga_id", referencedColumnName = "id"))
-    private List<SagaEntity> sagasAuthors;
+    private List<SagaEntity> sagasAuthors = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "author_books", joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"))
-    private List<BookEntity> booksAuthors;
+    private List<BookEntity> booksAuthors = new ArrayList<>();
 
     public AuthorEntity(String name) {
         this.name = name;

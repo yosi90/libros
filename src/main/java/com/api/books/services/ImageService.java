@@ -13,7 +13,7 @@ public interface ImageService {
 
     Resource uploadProfile(String fileName, Long userId) throws FileNotFoundException, MalformedURLException;
 
-    boolean removeImage(String filename);
+    boolean removeImage(String filename) throws IOException;
 
     String saveImage(MultipartFile file, Long userId) throws IOException;
 }

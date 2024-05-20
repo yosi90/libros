@@ -40,8 +40,7 @@ public class UniverseEntity {
     private UserEntity userUniverses;
 
     @ManyToMany(mappedBy = "universesAuthors")
-    List<AuthorEntity> authorsUniverses;
-
+    List<AuthorEntity> authorsUniverses = new ArrayList<>();
     public List<AuthorDTO> getAuthorsDTOs() {
         List<AuthorDTO> authorDTOs = new ArrayList<>();
         for (AuthorEntity author : authorsUniverses)
@@ -51,8 +50,7 @@ public class UniverseEntity {
 
     @JsonBackReference(value = "universe_sagas")
     @OneToMany(mappedBy = "universeSagas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SagaEntity> sagasUniverse;
-
+    private List<SagaEntity> sagasUniverse = new ArrayList<>();
     public List<SagaDTO> getSagasDTOs() {
         List<SagaDTO> sagaDTOs = new ArrayList<>();
         for (SagaEntity saga : sagasUniverse)
@@ -68,8 +66,7 @@ public class UniverseEntity {
 
     @JsonBackReference(value = "universe_books")
     @OneToMany(mappedBy = "universeBooks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookEntity> booksUniverse;
-
+    private List<BookEntity> booksUniverse = new ArrayList<>();
     public List<BookDTO> getBooksDTOs() {
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (BookEntity book : booksUniverse)

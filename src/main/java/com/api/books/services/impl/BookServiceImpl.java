@@ -19,6 +19,7 @@ import com.api.books.services.models.dtos.askers.NewBook;
 import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedBookDTO;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,10 @@ public class BookServiceImpl implements BookService {
     private final BookStatusRepository bookStatusRepository;
     private final ImageService imageService;
 
-    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository, AuthorRepository authorRepository, 
-    UniverseRepository universeRepository, SagaRepository sagaRepository, BookStatusRepository bookStatusRepository, ImageService imageService) {
+    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository,
+            AuthorRepository authorRepository,
+            UniverseRepository universeRepository, SagaRepository sagaRepository,
+            BookStatusRepository bookStatusRepository, ImageService imageService) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
@@ -53,8 +56,10 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<BookDTO> getBookById(Long bookId, Long userId) {
         try {
             BookEntity book = bookRepository.findById(bookId).orElse(null);
-            if (book == null) return ResponseEntity.notFound().build();
-            if (!Objects.equals(book.getOwner().getId(), userId)) return ResponseEntity.badRequest().build();
+            if (book == null)
+                return ResponseEntity.notFound().build();
+            if (!Objects.equals(book.getOwner().getId(), userId))
+                return ResponseEntity.badRequest().build();
             return ResponseEntity.ok(book.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -66,7 +71,8 @@ public class BookServiceImpl implements BookService {
         try {
             List<BookEntity> books = bookRepository.findAll();
             List<BookDTO> bookDTOS = new ArrayList<>();
-            if (books.isEmpty()) return ResponseEntity.noContent().build();
+            if (books.isEmpty())
+                return ResponseEntity.noContent().build();
             for (BookEntity bookEntity : books)
                 bookDTOS.add(bookEntity.toDTO());
             return ResponseEntity.ok(bookDTOS);
@@ -103,27 +109,34 @@ public class BookServiceImpl implements BookService {
         return bookTEMP.get();
     }
 
+    @Transactional
     private Optional<BookEntity> updateTemplateBook(BookEntity bookTemplate, NewBook updatedBook, MultipartFile cover) {
         try {
             bookTemplate.setName(updatedBook.getName());
-            UserEntity user = userRepository.findById(updatedBook.getUserId()).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+            UserEntity user = userRepository.findById(updatedBook.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             bookTemplate.setOwner(user);
             List<AuthorEntity> authors = new ArrayList<>();
             for (Long authorId : updatedBook.getAuthorIds()) {
-                AuthorEntity author = authorRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+                AuthorEntity author = authorRepository.findById(authorId)
+                        .orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
                 authors.add(author);
             }
             bookTemplate.setAuthorsBooks(authors);
-            UniverseEntity universe = universeRepository.findById(updatedBook.getUniverseId()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            UniverseEntity universe = universeRepository.findById(updatedBook.getUniverseId())
+                    .orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
             bookTemplate.setUniverseBooks(universe);
-            SagaEntity saga = sagaRepository.findById(updatedBook.getSagaId()).orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
+            SagaEntity saga = sagaRepository.findById(updatedBook.getSagaId())
+                    .orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
             bookTemplate.setSagaBooks(saga);
-            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus()).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus())
+                    .orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
             bookTemplate.setStatusBooks(status);
             String coverPath = imageService.saveImage(cover, user.getId());
             bookTemplate.setCover(coverPath);
             BookEntity bookFinal = bookRepository.save(bookTemplate);
-            for (AuthorEntity author : authors) {
+            List<AuthorEntity> authorsCopy = new ArrayList<>(authors);
+            for (AuthorEntity author : authorsCopy) {
                 List<BookEntity> authorBooks = author.getBooksAuthors();
                 authorBooks.add(bookFinal);
                 author.setBooksAuthors(authorBooks);

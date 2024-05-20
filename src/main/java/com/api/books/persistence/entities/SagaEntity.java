@@ -39,7 +39,7 @@ public class SagaEntity {
     private UserEntity userSagas;
 
     @ManyToMany(mappedBy = "sagasAuthors")
-    List<AuthorEntity> authorsSagas;
+    List<AuthorEntity> authorsSagas = new ArrayList<>();
     public List<AuthorDTO> getAuthorsDTOs() {
         List<AuthorDTO> authorDTOs = new ArrayList<>();
         for (AuthorEntity author : authorsSagas)
@@ -54,7 +54,7 @@ public class SagaEntity {
 
     @JsonBackReference(value = "user_books")
     @OneToMany(mappedBy = "sagaBooks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookEntity> booksSagas;
+    private List<BookEntity> booksSagas = new ArrayList<>();
     public List<BookDTO> getBooksDTOs() {
         List<BookDTO> bookDTOS = new ArrayList<>();
         for (BookEntity book : booksSagas)
