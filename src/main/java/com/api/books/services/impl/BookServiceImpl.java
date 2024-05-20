@@ -116,6 +116,7 @@ public class BookServiceImpl implements BookService {
             UserEntity user = userRepository.findById(updatedBook.getUserId())
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             bookTemplate.setOwner(user);
+            bookTemplate.setOrderInSaga(updatedBook.getOrderInSaga());
             List<AuthorEntity> authors = new ArrayList<>();
             for (Long authorId : updatedBook.getAuthorIds()) {
                 AuthorEntity author = authorRepository.findById(authorId)
