@@ -23,7 +23,9 @@ public class CreatedBookDTO {
     private int orderInSaga;
     private String cover;
     private Long userId;
+    private Long universeId;
     private UniverseDTO universe;
+    private Long sagaId;
     private SagaDTO saga;
     private BookstatusDTO status;
     private List<AuthorDTO> authors = new ArrayList<>();
