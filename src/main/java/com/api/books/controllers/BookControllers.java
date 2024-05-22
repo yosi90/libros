@@ -79,4 +79,14 @@ public class BookControllers {
             @RequestParam("cover") MultipartFile file) {
         return bookService.updateCover(bookId, file);
     }
+
+    @PatchMapping("/{bookId}/status/{statusId}")
+    @Operation(summary = "Actualizar el estado de lectura de un libro", description = "Actualiza el estado de un libro existente identificado por su nombre.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El estado del libro ha sido actualizado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Libro no encontrado.")
+    })
+    public ResponseEntity<BookDTO> updateStatus(@PathVariable Long bookId, @PathVariable Long statusId) {
+        return bookService.updateStatus(bookId, statusId);
+    }
 }

@@ -18,11 +18,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(exclude = { "booksStatus" })
+@EqualsAndHashCode(exclude = { "statusRead" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "read_status")
+@Table(name = "book_status")
 public class BookStatusEntity {
 
     @Id
@@ -31,8 +31,8 @@ public class BookStatusEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "statusBooks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookEntity> booksStatus;
+    @OneToMany(mappedBy = "readStatus", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ReadStatusEntity> statusRead;
 
     public BookStatusEntity(String name) {
         this.name = name;

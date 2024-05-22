@@ -3,12 +3,14 @@ package com.api.books.services.impl;
 import com.api.books.persistence.entities.AuthorEntity;
 import com.api.books.persistence.entities.BookEntity;
 import com.api.books.persistence.entities.BookStatusEntity;
+import com.api.books.persistence.entities.ReadStatusEntity;
 import com.api.books.persistence.entities.SagaEntity;
 import com.api.books.persistence.entities.UniverseEntity;
 import com.api.books.persistence.entities.UserEntity;
 import com.api.books.persistence.repositories.AuthorRepository;
 import com.api.books.persistence.repositories.BookRepository;
 import com.api.books.persistence.repositories.BookStatusRepository;
+import com.api.books.persistence.repositories.ReadStatusRepository;
 import com.api.books.persistence.repositories.SagaRepository;
 import com.api.books.persistence.repositories.UniverseRepository;
 import com.api.books.persistence.repositories.UserRepository;
@@ -37,18 +39,20 @@ public class BookServiceImpl implements BookService {
     private final UniverseRepository universeRepository;
     private final SagaRepository sagaRepository;
     private final BookStatusRepository bookStatusRepository;
+    private final ReadStatusRepository readStatusRepository;
     private final ImageService imageService;
 
     public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository,
-            AuthorRepository authorRepository,
-            UniverseRepository universeRepository, SagaRepository sagaRepository,
-            BookStatusRepository bookStatusRepository, ImageService imageService) {
+            AuthorRepository authorRepository, UniverseRepository universeRepository, SagaRepository sagaRepository,
+            ReadStatusRepository readStatusRepository, BookStatusRepository bookStatusRepository,
+            ImageService imageService) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.authorRepository = authorRepository;
         this.universeRepository = universeRepository;
         this.sagaRepository = sagaRepository;
         this.bookStatusRepository = bookStatusRepository;
+        this.readStatusRepository = readStatusRepository;
         this.imageService = imageService;
     }
 
@@ -130,12 +134,17 @@ public class BookServiceImpl implements BookService {
             SagaEntity saga = sagaRepository.findById(updatedBook.getSagaId())
                     .orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
             bookTemplate.setSagaBooks(saga);
-            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus())
-                    .orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
-            bookTemplate.setStatusBooks(status);
+            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus()).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+            ReadStatusEntity readStatus = new ReadStatusEntity();
+            readStatus.setReadStatus(status);
             String coverPath = imageService.saveImage(cover, user.getId());
             bookTemplate.setCover(coverPath);
             BookEntity bookFinal = bookRepository.save(bookTemplate);
+            readStatus.setReadStatusBook(bookFinal);
+            readStatusRepository.save(readStatus);
+            List<ReadStatusEntity> statusList = new ArrayList<>();
+            statusList.add(readStatus);
+            bookFinal.setStatusBook(statusList);
             List<AuthorEntity> authorsCopy = new ArrayList<>(authors);
             for (AuthorEntity author : authorsCopy) {
                 List<BookEntity> authorBooks = author.getBooksAuthors();
@@ -169,6 +178,28 @@ public class BookServiceImpl implements BookService {
             book.setCover(base64Image);
             book = bookRepository.save(book);
             return ResponseEntity.ok(book.toDTO());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<BookDTO> updateStatus(Long bookId, Long statusId) {
+        try {
+            Optional<BookEntity> bookOPT = bookRepository.findById(bookId);
+            if (bookOPT.isEmpty())
+                return ResponseEntity.notFound().build();
+            BookEntity book = bookOPT.get();
+            
+            BookStatusEntity status = bookStatusRepository.findById(statusId).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+            ReadStatusEntity readStatus = new ReadStatusEntity();
+            readStatus.setReadStatus(status);
+            readStatus.setReadStatusBook(book);
+            List<ReadStatusEntity> statusList = new ArrayList<>();
+            statusList.add(readStatus);
+            book.setStatusBook(statusList);
+            BookEntity bookFinal = bookRepository.save(book);
+            return ResponseEntity.ok(bookFinal.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

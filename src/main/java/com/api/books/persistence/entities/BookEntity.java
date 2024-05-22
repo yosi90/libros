@@ -4,6 +4,7 @@ import com.api.books.services.models.dtos.AuthorDTO;
 import com.api.books.services.models.dtos.BookDTO;
 import com.api.books.services.models.dtos.ChapterDTO;
 import com.api.books.services.models.dtos.CharacterDTO;
+import com.api.books.services.models.dtos.ReadStatusDTO;
 import com.api.books.services.models.dtos.recentlyCreatedEntities.CreatedBookDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(exclude = { "owner", "authorsBooks", "universeBooks", "sagaBooks", "characters" })
+@EqualsAndHashCode(exclude = { "owner", "authorsBooks", "universeBooks", "sagaBooks", "characters", "statusBook" })
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,13 +37,18 @@ public class BookEntity {
     private int orderInSaga = -1;
 
     @ManyToOne
-    @JoinColumn(name = "status_id", referencedColumnName = "id")
-    private BookStatusEntity statusBooks;
-
-    @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     @JsonIgnore
     private UserEntity owner;
+
+    @OneToMany(mappedBy = "readStatusBook", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ReadStatusEntity> statusBook = new ArrayList<>();
+    public List<ReadStatusDTO> getStatusDTOs() {
+        List<ReadStatusDTO> readStatusDTOs = new ArrayList<>();
+        for (ReadStatusEntity status : statusBook)
+            readStatusDTOs.add(status.toDTO());
+        return readStatusDTOs;
+    }
 
     @ManyToMany(mappedBy = "booksAuthors")
     List<AuthorEntity> authorsBooks;

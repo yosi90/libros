@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.api.books.persistence.entities.BookEntity;
 import com.api.books.services.models.dtos.AuthorDTO;
-import com.api.books.services.models.dtos.BookstatusDTO;
+import com.api.books.services.models.dtos.ReadStatusDTO;
 import com.api.books.services.models.dtos.SagaDTO;
 import com.api.books.services.models.dtos.UniverseDTO;
 
@@ -27,7 +27,7 @@ public class CreatedBookDTO {
     private UniverseDTO universe;
     private Long sagaId;
     private SagaDTO saga;
-    private BookstatusDTO status;
+    private List<ReadStatusDTO> status;
     private List<AuthorDTO> authors = new ArrayList<>();
 
     public CreatedBookDTO(BookEntity book) {
@@ -35,7 +35,7 @@ public class CreatedBookDTO {
         name = book.getName();
         orderInSaga = book.getOrderInSaga();
         cover = book.getCover();
-        status = book.getStatusBooks().toDTO();
+        status = book.getStatusDTOs();
         userId = book.getOwner().getId();
         universeId =  book.getUniverseBooks().getId();
         universe = book.getUniverseBooks().toDTO();

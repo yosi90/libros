@@ -1,6 +1,5 @@
 package com.api.books.services.models.dtos;
 
-import com.api.books.services.models.entities.DTOCosmicEntity;
 import com.api.books.persistence.entities.BookEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookDTO extends DTOCosmicEntity {
+public class BookDTO {
 
     private Long bookId;
     private String name;
@@ -21,7 +20,7 @@ public class BookDTO extends DTOCosmicEntity {
     private Long userId;
     private Long universeId;
     private Long sagaId;
-    private BookstatusDTO status;
+    private List<ReadStatusDTO> status;
     private List<AuthorDTO> authors = new ArrayList<>();
     private List<ChapterDTO> chapters = new ArrayList<>();
     private List<CharacterDTO> characters = new ArrayList<>();
@@ -31,7 +30,7 @@ public class BookDTO extends DTOCosmicEntity {
         name = book.getName();
         orderInSaga = book.getOrderInSaga();
         cover = book.getCover();
-        status = book.getStatusBooks().toDTO();
+        status = book.getStatusDTOs();
         userId = book.getOwner().getId();
         universeId = book.getUniverseBooks().getId();
         sagaId = book.getSagaBooks().getId();
