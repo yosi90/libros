@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +32,12 @@ public class ImageServiceImpl implements ImageService {
             rootFile = getPath("error.png");
             return new UrlResource(rootFile.toUri());
         }
+    }
+
+    public ResponseEntity<byte[]> uploadBlob(String fileName, Long userId) throws IOException {
+        Path path = getPath(STATIC + userId + "/" + fileName);
+        byte[] bytes = Files.readAllBytes(path);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
     }
 
     @Override

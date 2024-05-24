@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 public class NewBook {
 
+    private Long bookId = 0L;
     private String name;
     private Long userId;
     private int orderInSaga;

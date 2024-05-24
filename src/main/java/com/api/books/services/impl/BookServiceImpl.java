@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -65,6 +66,20 @@ public class BookServiceImpl implements BookService {
             if (!Objects.equals(book.getOwner().getId(), userId))
                 return ResponseEntity.badRequest().build();
             return ResponseEntity.ok(book.toDTO());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<CreatedBookDTO> getCreatedBookById(Long bookId, Long userId) {
+        try {
+            BookEntity book = bookRepository.findById(bookId).orElse(null);
+            if (book == null)
+                return ResponseEntity.notFound().build();
+            if (!Objects.equals(book.getOwner().getId(), userId))
+                return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(book.toCDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -134,7 +149,8 @@ public class BookServiceImpl implements BookService {
             SagaEntity saga = sagaRepository.findById(updatedBook.getSagaId())
                     .orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
             bookTemplate.setSagaBooks(saga);
-            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus()).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+            BookStatusEntity status = bookStatusRepository.findByName(updatedBook.getStatus())
+                    .orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
             ReadStatusEntity readStatus = new ReadStatusEntity();
             readStatus.setReadStatus(status);
             String coverPath = imageService.saveImage(cover, user.getId());
@@ -167,20 +183,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseEntity<BookDTO> updateCover(Long bookId, MultipartFile img) {
-        try {
-            Optional<BookEntity> bookOPT = bookRepository.findById(bookId);
-            if (bookOPT.isEmpty())
-                return ResponseEntity.notFound().build();
-            byte[] imageBytes = img.getBytes();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            BookEntity book = bookOPT.get();
-            book.setCover(base64Image);
-            book = bookRepository.save(book);
-            return ResponseEntity.ok(book.toDTO());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CreatedBookDTO> updateBook(NewBook bookNew, Long bookId, MultipartFile cover) throws IOException {
+        BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));
+        Optional<BookEntity> bookFinal = updateTemplateBook(book, bookNew, cover);
+        if (bookFinal.isEmpty())
+            return ResponseEntity.unprocessableEntity().build();
+        return ResponseEntity.ok(bookFinal.get().toCDTO());
     }
 
     @Override
@@ -190,8 +198,9 @@ public class BookServiceImpl implements BookService {
             if (bookOPT.isEmpty())
                 return ResponseEntity.notFound().build();
             BookEntity book = bookOPT.get();
-            
-            BookStatusEntity status = bookStatusRepository.findById(statusId).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+
+            BookStatusEntity status = bookStatusRepository.findById(statusId)
+                    .orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
             ReadStatusEntity readStatus = new ReadStatusEntity();
             readStatus.setReadStatus(status);
             readStatus.setReadStatusBook(book);

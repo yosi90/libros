@@ -35,6 +35,17 @@ public class BookControllers {
         return bookService.getBookById(bookId, userId);
     }
 
+    @GetMapping("/created/{bookId}/{userId}")
+    @Operation(summary = "Obtener un libro por su ID", description = "Recupera un libro existente utilizando su ID y el ID del usuario propietario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El libro ha sido encontrado exitosamente."),
+            @ApiResponse(responseCode = "400", description = "Petición incorrecta: El libro no pertenece al usuario."),
+            @ApiResponse(responseCode = "404", description = "Libro no encontrado.")
+    })
+    public ResponseEntity<CreatedBookDTO> getCreatedBookById(@PathVariable Long bookId, @PathVariable Long userId) {
+        return bookService.getCreatedBookById(bookId, userId);
+    }
+
     @GetMapping
     @Operation(summary = "Obtener todos los libros", description = "Recupera una lista de todos los libros disponibles.")
     @ApiResponse(responseCode = "200", description = "Lista de libros recuperada exitosamente.")
@@ -69,15 +80,30 @@ public class BookControllers {
         return bookService.addBook(bookNew, file);
     }
 
-    @PatchMapping("/{bookId}/cover")
-    @Operation(summary = "Actualizar la portada de un libro", description = "Actualiza la portada de un libro existente identificado por su ID.")
+    @PutMapping("/{bookId}")
+    @Operation(summary = "Actualiza un libro", description = "Actualiza un libro utilizando los datos proporcionados en el cuerpo de la solicitud.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "La portada del libro ha sido actualizada exitosamente."),
-            @ApiResponse(responseCode = "404", description = "Libro no encontrado.")
+            @ApiResponse(responseCode = "200", description = "El libro ha sido actualizado exitosamente."),
+            @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud."),
+            @ApiResponse(responseCode = "404", description = "Dueño del libro no encontrado.")
     })
-    public ResponseEntity<BookDTO> updateCover(@PathVariable Long bookId,
-            @RequestParam("cover") MultipartFile file) {
-        return bookService.updateCover(bookId, file);
+    public ResponseEntity<CreatedBookDTO> updateBook(@PathVariable Long bookId,
+            @RequestParam("name") String name,
+            @RequestParam("userId") String userId,
+            @RequestParam("orderInSaga") String orderInSaga,
+            @RequestParam("authors") String authors,
+            @RequestParam("status") String status,
+            @RequestParam("universe") String universe,
+            @RequestParam("saga") String saga,
+            @RequestParam("file") MultipartFile file) throws Exception {
+        String[] authorIds;
+        if (authors.contains(","))
+            authorIds = authors.split(",");
+        else
+            authorIds = new String[] { authors };
+
+        NewBook bookNew = new NewBook(name, Long.parseLong(userId), Integer.parseInt(orderInSaga), status, authorIds, Long.parseLong(universe), Long.parseLong(saga));
+        return bookService.updateBook(bookNew, bookId, file);
     }
 
     @PatchMapping("/{bookId}/status/{statusId}")
