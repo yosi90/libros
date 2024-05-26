@@ -103,7 +103,7 @@ public class SagaServiceImpl implements SagaService {
                 authors.add(author);
             }
             sagaTemplate.setAuthorsSagas(authors);
-            UniverseEntity universe = universeRepository.findByName(updatedSaga.getUniverse().getName()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+            UniverseEntity universe = universeRepository.findByNameAndUserUniversesId(updatedSaga.getUniverse().getName(), updatedSaga.getUserId()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
             sagaTemplate.setUniverseSagas(universe);
             SagaEntity sagaFinal = sagaRepository.save(sagaTemplate);
             for (AuthorEntity author : authors) {
