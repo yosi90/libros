@@ -31,6 +31,17 @@ public class UniverseControllers {
         return universeService.getAllUniverses();
     }
 
+    @GetMapping("/created/{universeId}/{userId}")
+    @Operation(summary = "Obtener un universo por su ID", description = "Recupera un universo existente utilizando su ID y el ID del usuario propietario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El universo ha sido encontrado exitosamente."),
+            @ApiResponse(responseCode = "400", description = "Petición incorrecta: El universo no pertenece al usuario."),
+            @ApiResponse(responseCode = "404", description = "Universo no encontrado.")
+    })
+    public ResponseEntity<CreatedUniverseDTO> getCreatedUniverseById(@PathVariable Long universeId, @PathVariable Long userId) {
+        return universeService.getCreatedUniverseById(universeId, userId);
+    }
+
     @PostMapping
     @Operation(summary = "Crear un nuevo universo",
             description = "Crea un nuevo universo utilizando los datos proporcionados en el cuerpo de la solicitud.")
@@ -40,6 +51,17 @@ public class UniverseControllers {
     })
     public ResponseEntity<CreatedUniverseDTO> addUniverse(@RequestBody @Valid NewUniverse universeNew, BindingResult result) {
         return universeService.addUniverse(universeNew, result);
+    }
+
+    @PutMapping("/{universeId}")
+    @Operation(summary = "Crear un nuevo universo",
+            description = "Crea un nuevo universo utilizando los datos proporcionados en el cuerpo de la solicitud.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El universo ha sido creado exitosamente."),
+            @ApiResponse(responseCode = "406", description = "Error de validación en el cuerpo de la solicitud.")
+    })
+    public ResponseEntity<CreatedUniverseDTO> updateUniverse(@RequestBody NewUniverse universeNew, @PathVariable Long universeId) {
+        return universeService.updateUniverse(universeNew, universeId);
     }
 
     @PatchMapping("/{universeId}/name")

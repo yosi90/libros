@@ -29,6 +29,17 @@ public class SagaControllers {
         return sagaService.getAllSagas();
     }
 
+    @GetMapping("/created/{sagaId}/{userId}")
+    @Operation(summary = "Obtener una saga por su ID", description = "Recupera una saga existente utilizando su ID y el ID del usuario propietario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "La saga ha sido encontrada exitosamente."),
+            @ApiResponse(responseCode = "400", description = "Petición incorrecta: La saga no pertenece al usuario."),
+            @ApiResponse(responseCode = "404", description = "Saga no encontradq.")
+    })
+    public ResponseEntity<CreatedSagaDTO> getCreatedUniverseById(@PathVariable Long sagaId, @PathVariable Long userId) {
+        return sagaService.getCreatedSagaById(sagaId, userId);
+    }
+
     @PostMapping
     @Operation(summary = "Crear una nueva saga", description = "Crea una nueva saga utilizando los datos proporcionados en el cuerpo de la solicitud.")
     @ApiResponses(value = {

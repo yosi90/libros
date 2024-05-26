@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface UniverseRepository extends JpaRepository<UniverseEntity, Long> {
 
     Optional<UniverseEntity> findByName(String name);
-
-    Optional<UniverseEntity> findByUserUniverses_id(Long userId);
     
     List<UniverseEntity> findByUserUniversesId(Long userId);
+
+    Optional<UniverseEntity> findByNameAndUserUniversesId(String name, Long userId);
 }

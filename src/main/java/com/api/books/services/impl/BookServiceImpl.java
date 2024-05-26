@@ -185,10 +185,63 @@ public class BookServiceImpl implements BookService {
     @Override
     public ResponseEntity<CreatedBookDTO> updateBook(NewBook bookNew, Long bookId, MultipartFile cover) throws IOException {
         BookEntity book = bookRepository.findById(bookId).orElseThrow(() -> new EntityNotFoundException("Libro no encontrado"));
-        Optional<BookEntity> bookFinal = updateTemplateBook(book, bookNew, cover);
-        if (bookFinal.isEmpty())
-            return ResponseEntity.unprocessableEntity().build();
-        return ResponseEntity.ok(bookFinal.get().toCDTO());
+        book.setName(bookNew.getName());
+        book.setOrderInSaga(bookNew.getOrderInSaga());
+        List<AuthorEntity> updatedAuthorList = new ArrayList<>();
+        for (Long authorId : bookNew.getAuthorIds()) {
+            AuthorEntity author = authorRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+            updatedAuthorList.add(author);
+        }
+        List<AuthorEntity> addedAuthors = new ArrayList<>();
+        for (AuthorEntity author : updatedAuthorList) {
+            if (!book.getAuthorsBooks().contains(author))
+                addedAuthors.add(author);
+        }
+        List<AuthorEntity> removedAuthors = new ArrayList<>();
+        for (AuthorEntity author : book.getAuthorsBooks()) {
+            if (!updatedAuthorList.contains(author))
+                removedAuthors.add(author);
+        }
+        UniverseEntity universe = universeRepository.findById(bookNew.getUniverseId()).orElseThrow(() -> new EntityNotFoundException("Universo no encontrado"));
+        book.setUniverseBooks(universe);
+        SagaEntity saga = sagaRepository.findById(bookNew.getSagaId()).orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
+        book.setSagaBooks(saga);
+        BookStatusEntity status = bookStatusRepository.findByName(bookNew.getStatus()).orElseThrow(() -> new EntityNotFoundException("Estado de lectura no encontrado"));
+        ReadStatusEntity readStatus = new ReadStatusEntity();
+        readStatus.setReadStatus(status);
+        imageService.removeImage(book.getCover());
+        String coverPath = imageService.saveImage(cover, bookNew.getUserId());
+        book.setCover(coverPath);
+        BookEntity bookFinal = bookRepository.save(book);
+        readStatus.setReadStatusBook(bookFinal);
+        readStatusRepository.save(readStatus);
+        List<ReadStatusEntity> statusList = new ArrayList<>();
+        statusList.add(readStatus);
+        bookFinal.setStatusBook(statusList);
+        for (AuthorEntity author : addedAuthors) {
+            List<BookEntity> authorBooks = author.getBooksAuthors();
+            authorBooks.add(bookFinal);
+            author.setBooksAuthors(authorBooks);
+            authorRepository.save(author);
+        }
+        for (AuthorEntity author : removedAuthors) {
+            List<BookEntity> authorBooks = new ArrayList<>();
+            for(BookEntity bookEntity : author.getBooksAuthors()) {
+                if(book.getId() != bookId)
+                    authorBooks.add(bookEntity);
+            }
+            author.setBooksAuthors(authorBooks);
+            authorRepository.save(author);
+        }
+        List<BookEntity> universeBooks = universe.getBooksUniverse();
+        universeBooks.add(bookFinal);
+        universe.setBooksUniverse(universeBooks);
+        universeRepository.save(universe);
+        List<BookEntity> sagaBooks = saga.getBooksSagas();
+        sagaBooks.add(bookFinal);
+        saga.setBooksSagas(sagaBooks);
+        sagaRepository.save(saga);
+        return ResponseEntity.ok(bookFinal.toCDTO());
     }
 
     @Override

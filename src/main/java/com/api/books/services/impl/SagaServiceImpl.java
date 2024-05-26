@@ -41,6 +41,18 @@ public class SagaServiceImpl implements SagaService {
     }
 
     @Override
+    public ResponseEntity<CreatedSagaDTO> getCreatedSagaById(Long sagaId, Long userId) {
+        try {
+            SagaEntity saga = sagaRepository.findById(sagaId).orElseThrow(() -> new EntityNotFoundException("Saga no encontrada"));
+            if (!Objects.equals(saga.getUserSagas().getId(), userId))
+                return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(saga.toCDTO());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
     public ResponseEntity<List<SagaDTO>> getAllSagas() {
         try {
             List<SagaEntity> sagas = sagaRepository.findAll();

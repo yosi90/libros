@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface SagaService {
+    
+    ResponseEntity<CreatedSagaDTO> getCreatedSagaById(Long sagaId, Long userId);
 
     ResponseEntity<List<SagaDTO>> getAllSagas();
 

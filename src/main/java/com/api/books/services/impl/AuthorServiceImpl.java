@@ -31,11 +31,22 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public ResponseEntity<AuthorDTO> getAuthorById(Long authorId) {
+        try {
+            AuthorEntity author = authorRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Autor no encontrado"));
+            return ResponseEntity.ok(author.toDTO());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Override
     public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
         try {
             List<AuthorEntity> authors = authorRepository.findAll();
             List<AuthorDTO> authorDTOs = new ArrayList<>();
-            if (authors.isEmpty()) return ResponseEntity.noContent().build();
+            if (authors.isEmpty())
+                return ResponseEntity.noContent().build();
             for (AuthorEntity authorEntity : authors)
                 authorDTOs.add(authorEntity.toDTO());
             return ResponseEntity.ok(authorDTOs);
@@ -51,7 +62,8 @@ public class AuthorServiceImpl implements AuthorService {
                 return ResponseEntity.unprocessableEntity().build();
             }
             Optional<AuthorEntity> existingAuthor = authorRepository.findByName(authorNew.getName());
-            if (existingAuthor.isPresent() && Objects.equals(authorNew.getUserId(), existingAuthor.get().getUserAuthors().getId())) {
+            if (existingAuthor.isPresent()
+                    && Objects.equals(authorNew.getUserId(), existingAuthor.get().getUserAuthors().getId())) {
                 return new ResponseEntity<>(new AuthorDTO(), HttpStatus.CONFLICT);
             }
             AuthorEntity authorTEMP = getTemplateAuthor();
@@ -101,4 +113,3 @@ public class AuthorServiceImpl implements AuthorService {
         }
     }
 }
-

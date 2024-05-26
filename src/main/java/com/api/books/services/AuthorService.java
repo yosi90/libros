@@ -10,6 +10,8 @@ import org.springframework.validation.BindingResult;
 
 public interface AuthorService {
 
+    ResponseEntity<AuthorDTO> getAuthorById(Long authorId);
+
     ResponseEntity<List<AuthorDTO>> getAllAuthors();
 
     ResponseEntity<AuthorDTO> addAuthor(NewAuthor authorNew, BindingResult result);

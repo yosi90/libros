@@ -11,6 +11,8 @@ import com.api.books.persistence.repositories.BookStatusRepository;
 import com.api.books.services.BookStatusService;
 import com.api.books.services.models.dtos.BookstatusDTO;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class BookStatusServiceImpl implements BookStatusService {
     
@@ -23,8 +25,7 @@ public class BookStatusServiceImpl implements BookStatusService {
     @Override
     public ResponseEntity<BookstatusDTO> getStatusById(Long statusId) {
         try {
-            BookStatusEntity status = bookStatusRepository.findById(statusId).orElse(null);
-            if (status == null) return ResponseEntity.notFound().build();
+            BookStatusEntity status = bookStatusRepository.findById(statusId).orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
             return ResponseEntity.ok(status.toDTO());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

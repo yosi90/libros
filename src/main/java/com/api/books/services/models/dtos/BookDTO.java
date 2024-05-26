@@ -20,6 +20,7 @@ public class BookDTO {
     private Long userId;
     private Long universeId;
     private Long sagaId;
+    private String sagaName;
     private List<ReadStatusDTO> status;
     private List<AuthorDTO> authors = new ArrayList<>();
     private List<ChapterDTO> chapters = new ArrayList<>();
@@ -34,6 +35,7 @@ public class BookDTO {
         userId = book.getOwner().getId();
         universeId = book.getUniverseBooks().getId();
         sagaId = book.getSagaBooks().getId();
+        sagaName = book.getSagaBooks().getName();
         if(!book.getAuthorsBooks().isEmpty())
             authors = book.getAuthorsDTOs();
         chapters = book.getChaptersDTOs();

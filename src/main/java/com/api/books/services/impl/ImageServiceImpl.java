@@ -55,6 +55,8 @@ public class ImageServiceImpl implements ImageService {
     public boolean removeImage(String filename) {
         if (filename == null || filename.length() == 0)
             return false;
+        else if (filename.toLowerCase() == "error.png" || filename.toLowerCase() == "profile.png")
+            return true;
         Path path = getPath(STATIC + filename);
         if (Files.exists(path) && Files.isReadable(path)) {
             try {
@@ -70,10 +72,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String saveImage(MultipartFile file, Long userId) throws IOException {
         try {
-            String fileName = file.getOriginalFilename();
-            if (fileName == null)
-                return "";
-            String randomizedName = UUID.randomUUID().toString() + "_" + fileName.replace(" ", "");
+            String randomizedName = UUID.randomUUID().toString();
             Path filePath = getPath(STATIC + userId + "/" + randomizedName);
             Files.createDirectories(filePath.getParent());
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);

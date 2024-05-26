@@ -11,4 +11,6 @@ public interface SagaRepository extends JpaRepository<SagaEntity, Long> {
     Optional<SagaEntity> findByName(String name);
     
     List<SagaEntity> findByUserSagasId(Long userId);
+
+    Optional<SagaEntity> findByNameAndUserSagasIdAndUniverseSagasId(String name, Long userId, Long universeId);
 }

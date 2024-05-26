@@ -23,6 +23,16 @@ public class AuthorControllers {
     @Autowired
     private AuthorService authorService;
 
+    @GetMapping("/{authorId}")
+    @Operation(summary = "Obtener autor por ID", description = "Recupera un autor existente utilizando su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El autor ha sido encontrado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Autor no encontrado.")
+    })
+    public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long authorId) {
+        return authorService.getAuthorById(authorId);
+    }
+
     @GetMapping
     public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
         return authorService.getAllAuthors();
